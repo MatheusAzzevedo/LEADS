@@ -1,10 +1,15 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, ReactNode } from 'react';
 import { apiService } from '../services/api';
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext<{
+  user: { id: number; username: string; name: string } | null;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  isLoading: boolean;
+} | undefined>(undefined);
 
-export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<{ id: number; username: string; name: string } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -34,7 +39,7 @@ export function AuthProvider({ children }) {
     setIsLoading(false);
   };
 
-  const login = async (username, password) => {
+  const login = async (username: string, password: string): Promise<boolean> => {
     try {
       const response = await apiService.login({ username, password });
       localStorage.setItem('token', response.token);

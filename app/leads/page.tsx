@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
-import { apiService } from '../../services/api';
-import { toast } from 'react-hot-toast';
 import { useLeadForm } from '../../hooks/useLeadForm';
+import { useState } from 'react';
 
 const leadSchema = z.object({
   firstName: z.string().min(1, 'Nome é obrigatório'),

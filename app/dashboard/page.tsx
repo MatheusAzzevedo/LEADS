@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../lib/auth';
 import { apiService } from '../../services/api';
@@ -13,7 +13,6 @@ import {
   LogOut,
   Plus,
   Search,
-  Filter,
   Trash2
 } from 'lucide-react';
 

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
-import { Input } from '../../components/ui/Input';
-import { toast } from 'react-hot-toast';
 import { useLeadForm } from '../../hooks/useLeadForm';
 
 interface QuestionData {
