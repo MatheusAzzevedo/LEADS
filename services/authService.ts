@@ -67,7 +67,7 @@ export const authService = {
     }
   },
 
-  async validateToken(token: string): Promise<User> {
+  async validateToken(): Promise<User> {
     // Por enquanto, retornar o usuário do localStorage
     const userStr = localStorage.getItem('auth_user')
     if (userStr) {

@@ -132,7 +132,7 @@ export default function PlansPage() {
               className="flex transition-transform duration-300 ease-in-out"
               style={{ transform: `translateX(-${currentIndex * 100}%)` }}
             >
-              {plans.map((plan, index) => (
+              {plans.map((plan) => (
                 <div key={plan.planId} className="w-full flex-shrink-0">
                   <div className="bg-white p-8 rounded-xl shadow-lg mx-4">
                     <div className="text-center">
