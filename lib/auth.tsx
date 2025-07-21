@@ -24,7 +24,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Verificar se há um token salvo e validá-lo
     const token = localStorage.getItem('auth_token')
     if (token) {
-      authService.validateToken(token)
+      authService.validateToken()
         .then(userData => {
           setUser(userData)
         })
