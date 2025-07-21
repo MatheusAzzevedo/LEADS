@@ -19,9 +19,8 @@ export default function QuestionsPage() {
     question4Responses: [],
     question5Text: '',
   });
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { leadForm, setLeadForm } = useLeadForm();
+  const { setLeadForm } = useLeadForm();
 
   const questions = [
     {
@@ -118,7 +117,7 @@ export default function QuestionsPage() {
             
             <Button
               type="submit"
-              loading={loading}
+              loading={false}
               className="w-full"
             >
               Próximo

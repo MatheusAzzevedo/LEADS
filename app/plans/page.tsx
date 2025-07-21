@@ -145,8 +145,8 @@ export default function PlansPage() {
                       
                       {/* Features do plano */}
                       <div className="space-y-3 mb-8">
-                        {getPlanFeatures(plan.planId).map((feature, idx) => (
-                          <div key={idx} className="flex items-center justify-center space-x-2">
+                        {getPlanFeatures(plan.planId).map((feature) => (
+                          <div key={feature} className="flex items-center justify-center space-x-2">
                             <Check className="h-5 w-5 text-green-500" />
                             <span className="text-gray-700">{feature}</span>
                           </div>

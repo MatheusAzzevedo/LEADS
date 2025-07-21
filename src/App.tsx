@@ -8,7 +8,6 @@ import LeadsPage from '../app/leads/page';
 import QuestionsPage from '../app/questions/page';
 import PlansPage from '../app/plans/page';
 import JobsPage from '../app/jobs/page';
-import ProtectedRoute from '../components/auth/ProtectedRoute';
 import LeadDetailPage from '../app/leads/[id]/page';
 import { LeadFormProvider } from '../hooks/useLeadForm';
 

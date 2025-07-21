@@ -19,9 +19,8 @@ const leadSchema = z.object({
 type LeadFormData = z.infer<typeof leadSchema>;
 
 export default function LeadRegistrationPage() {
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { leadForm, setLeadForm } = useLeadForm();
+  const { setLeadForm } = useLeadForm();
 
   const {
     register,
@@ -91,7 +90,7 @@ export default function LeadRegistrationPage() {
             
             <Button
               type="submit"
-              loading={loading}
+              loading={false}
               className="w-full"
             >
               Próximo
