@@ -316,3 +316,15 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 **MenuErh** - Sistema simples, eficiente e bem estruturado para gestão de leads. 
 
 **Status Atual**: Backend funcionando a 95% - Pronto para integração com frontend e testes completos. 
+
+---
+
+## 🚀 Deploy Automático no Railway
+
+Todos os commits e push realizados neste repositório (`main`) são utilizados para disparar o deploy automático no Railway.
+
+- **Importante:** Certifique-se de que todas as alterações estejam testadas antes de realizar o push, pois o ambiente de produção será atualizado automaticamente.
+- O deploy é feito a partir do branch `main`.
+- Para mais detalhes sobre o fluxo de deploy, consulte a documentação do Railway.
+
+--- 

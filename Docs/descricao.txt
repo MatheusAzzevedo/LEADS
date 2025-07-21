@@ -1,0 +1,666 @@
+MenuErh é o nome do sistema.
+Esse sistema é MUITO simples e tem como objetivo apenas guardar informações.
+
+
+Telas:
+1° Cadastro do Lead;
+2° Perguntas;
+3° Planos;
+4° Dashboard com informações.
+
+Fluxo:
+Existirá vários atendentes que vão usar esse sistema, cada um deles vai estar em tempo real cadastrando leads.
+
+1° Cadastro do lead:
+
+O atendente que vai preencher as informações de cadastro que serão:
+    - nome;
+    - sobrenome;
+    - email;
+    - telefone;
+    - cargo;
+    - empresa.
+
+Quando o atendente preencher essas informações, o sistema deve gerar um  ID númerico único para esse lead.
+Terá um botão de "próximo" que ao clicar, vai para tela 2.
+
+2° Perguntas:
+
+Aqui vão ter inicialmente 5 perguntas todas com checkbox e a última com campo de texto para escrever.
+
+Terá um botão de "próximo" que ao clicar vai para a tela 3.
+
+3° Planos:
+
+Essa tela terá uma apresentação de planos criados como cards e um carrossel que dá para ver metade do que está no próximo plano
+um pouco escuro para destacar o plano que está na frente.
+
+Cada card terão descrições bem detalhadas com uma imagem e os detalhes do plano na lateral direita.
+
+Deverá ter um radial em cada plano para o atendente tickar qual foi o plano que o cliente tiver tido mais interesse, isso é apenas
+uma marcação que mostratá visualmente qual plano o cliente mais gostou.
+
+Terá um botão de "Finalizar" que ao ser clicado o fluxo reinicia salvando todos os dados desse lead, criando o ID numerico unico dele
+no banco de dados e deixando na tela 1 para iniciar o cadastro do próximo lead.
+
+4° tela será um dashboard que contabilizará quantos leads foram cadastrados em bignumbers e uma tabela
+que vai mostrar na primeira preview: nome, cargo, empresa, plano destacado.
+Ao clicar na linha de cada lead, abre um popup com os detalhes do restante das informações de cadastro daquele lead,
+as perguntas e o que foi respondido e o plano destacado que o cliente mais mostrou interesse, se não houver plano destacado
+vai aparecer todos os 3 planos.
+
+IMPORTANTE:
+Não é permitido alterar as tencologias que serão utilizadas:
+    - Tecnologias recomendadas para o MenuErh
+   -  Backend: Ktor (Kotlin)
+    - Banco de dados: PostgreSQL
+    - Acesso ao banco: Exposed (Kotlin)
+    - Frontend: React
+    - Estilo e responsividade: CSS Flexbox, Grid e Media Queries pode usar Tailwind CSS
+    - Comunicação: API REST (HTTP/JSON)
+    - Mais tecnologias: WebSocket (para tempo real) e autenticação
+
+menuerh-system/
+├── app/
+│   ├── (auth)/
+│   │   ├── login/             # Tela de login
+│   │   │   ├── page.tsx
+│   │   │   └── layout.tsx
+│   │   └── register/          # Tela de cadastro
+│   │       ├── page.tsx
+│   │       └── layout.tsx
+│   │
+│   ├── dashboard/
+│   │   ├── page.tsx           # Dashboard principal
+│   │   └── layout.tsx
+│   │
+│   ├── leads/
+│   │   ├── page.tsx           # Tela de cadastro de leads
+│   │   └── layout.tsx
+│   │
+│   ├── plans/
+│   │   ├── page.tsx           # Apresentação de planos
+│   │   └── layout.tsx
+│   │
+│   ├── jobs/
+│   │   ├── page.tsx           # Publicação de vagas
+│   │   └── layout.tsx
+│   │
+│   ├── api/
+│   │   ├── auth/
+│   │   │   └── route.kt       # Endpoint de autenticação (Ktor)
+│   │   ├── leads/
+│   │   │   └── route.kt       # Endpoint cadastro leads
+│   │   ├── plans/
+│   │   │   └── route.kt       # Endpoint planos
+│   │   └── websocket/
+│   │       └── route.kt       # WebSocket tempo real
+│   │
+│   └── layout.tsx             # Layout global do app
+│
+├── components/
+│   ├── ui/                    # Componentes visuais
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   └── modal.tsx
+│   ├── layout/
+│   │   ├── sidebar.tsx
+│   │   ├── header.tsx
+│   │   └── main-layout.tsx
+│   └── auth/
+│       ├── login-form.tsx
+│       └── logout-button.tsx
+│
+├── lib/
+│   ├── auth.ts                # Configuração de autenticação
+│   ├── db.ts                  # Conexão Prisma/Exposed
+│   ├── utils.ts               # Funções utilitárias
+│   └── validations.ts         # Schemas de validação (Zod/Kotlin)
+│
+├── prisma/                    # Schema e migrations (se usar Prisma)
+│   ├── schema.prisma
+│   └── seed.ts
+│
+├── database/                  # Caso use Exposed puro no Kotlin
+│   ├── migrations/
+│   ├── schema/
+│   └── seeds/
+│
+├── types/
+│   ├── auth.ts                # Tipagens
+│   └── lead.ts
+│
+└── middleware.ts              # Middlewares globais
+
+
+    A seguir é um rascunho basico para ter uma ideia de como ficaria, o layout pode permanecer o mesmo que ficou bonito:
+
+    <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MenuErh - Sistema de Leads</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom styles for the carousel */
+        .carousel-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .carousel-track {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        .carousel-item {
+            flex: 0 0 100%;
+            max-width: 100%;
+            padding: 0 1rem;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            transform: scale(0.85);
+            opacity: 0.5;
+        }
+        .carousel-item.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Hide number input spinners */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="app" class="min-h-screen flex flex-col">
+        <!-- Header / Navigation -->
+        <header class="bg-white shadow-md w-full">
+            <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center">
+                    <i class="fas fa-chart-line text-2xl text-blue-600 mr-3"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">MenuErh</h1>
+                </div>
+                <div>
+                    <button id="nav-cadastro" class="px-4 py-2 text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300">Cadastro de Lead</button>
+                    <button id="nav-dashboard" class="ml-4 px-4 py-2 text-gray-700 bg-gray-200 rounded-lg shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition duration-300">Dashboard</button>
+                </div>
+            </nav>
+        </header>
+
+        <main class="flex-grow container mx-auto p-6">
+            <!-- Screen 1: Cadastro do Lead -->
+            <div id="cadastro-tela" class="screen">
+                <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">1. Cadastro do Lead</h2>
+                    <form id="cadastro-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <input type="text" id="nome" placeholder="Nome" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                            <input type="text" id="sobrenome" placeholder="Sobrenome" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        </div>
+                        <input type="email" id="email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <input type="tel" id="telefone" placeholder="Telefone" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <input type="text" id="cargo" placeholder="Cargo" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <input type="text" id="empresa" placeholder="Empresa" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" required>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Próximo</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Screen 2: Perguntas -->
+            <div id="perguntas-tela" class="screen hidden">
+                 <div class="bg-white p-8 rounded-xl shadow-lg max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-700">2. Perguntas de Qualificação</h2>
+                    <form id="perguntas-form" class="space-y-6">
+                        <div>
+                            <p class="font-semibold mb-2">Pergunta 1: Quais são seus maiores desafios atualmente?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" name="pergunta1" value="Retenção de talentos" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Retenção de talentos</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta1" value="Recrutamento" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Recrutamento</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta1" value="Engajamento da equipe" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Engajamento da equipe</span></label>
+                            </div>
+                        </div>
+                         <div>
+                            <p class="font-semibold mb-2">Pergunta 2: Qual o tamanho da sua equipe?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" name="pergunta2" value="1-50" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">1-50 funcionários</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta2" value="51-200" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">51-200 funcionários</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta2" value="201+" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Mais de 200 funcionários</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-semibold mb-2">Pergunta 3: Você utiliza algum software de gestão?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" name="pergunta3" value="Sim, um completo" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Sim, um completo</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta3" value="Sim, mas é limitado" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Sim, mas é limitado</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta3" value="Não" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Não</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-semibold mb-2">Pergunta 4: Qual a prioridade para investimento?</p>
+                            <div class="space-y-2">
+                                <label class="flex items-center"><input type="checkbox" name="pergunta4" value="Tecnologia" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Tecnologia</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta4" value="Treinamento" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Treinamento</span></label>
+                                <label class="flex items-center"><input type="checkbox" name="pergunta4" value="Benefícios" class="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"> <span class="ml-2">Benefícios</span></label>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-semibold mb-2">Pergunta 5: Anotações adicionais</p>
+                            <textarea id="pergunta5" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Escreva aqui..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-300 shadow-md">Próximo</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Screen 3: Planos -->
+            <div id="planos-tela" class="screen hidden">
+                 <div class="bg-white p-8 rounded-xl shadow-lg max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-2 text-center text-gray-700">3. Apresentação dos Planos</h2>
+                    <p class="text-center text-gray-500 mb-8">Marque o plano de maior interesse do cliente.</p>
+                    
+                    <div class="carousel-container mb-8">
+                        <div id="carousel-track" class="carousel-track">
+                            <!-- Plan cards will be injected here by JS -->
+                        </div>
+                    </div>
+                    <div class="flex justify-center items-center space-x-4">
+                        <button id="prev-btn" class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition"><i class="fas fa-chevron-left text-gray-600"></i></button>
+                        <div id="carousel-dots" class="flex space-x-2"></div>
+                        <button id="next-btn" class="p-3 bg-gray-200 rounded-full hover:bg-gray-300 transition"><i class="fas fa-chevron-right text-gray-600"></i></button>
+                    </div>
+
+                    <button id="finalizar-btn" class="mt-8 w-full bg-green-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-700 transition duration-300 shadow-md">Finalizar e Salvar Lead</button>
+                </div>
+            </div>
+
+            <!-- Screen 4: Dashboard -->
+            <div id="dashboard-tela" class="screen hidden">
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h2 class="text-2xl font-bold mb-6 text-gray-700">Dashboard de Leads</h2>
+                    
+                    <div class="mb-6 bg-blue-50 p-6 rounded-lg">
+                        <h3 class="font-bold text-lg text-blue-800">Total de Leads Cadastrados</h3>
+                        <p id="total-leads" class="text-5xl font-extrabold text-blue-600">0</p>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white rounded-lg">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-600">Nome</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-600">Cargo</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-600">Empresa</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-600">Plano de Interesse</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-gray-600">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leads-table-body" class="text-gray-700">
+                                <!-- Rows will be injected here by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Lead Details -->
+    <div id="lead-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-gray-800">Detalhes do Lead</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800 text-2xl">&times;</button>
+            </div>
+            <div id="modal-content" class="p-6 space-y-6">
+                <!-- Modal content will be injected here -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Success Toast -->
+    <div id="success-toast" class="fixed top-5 right-5 bg-green-500 text-white py-3 px-5 rounded-lg shadow-xl opacity-0 translate-y-10 transition-all duration-300">
+        <i class="fas fa-check-circle mr-2"></i>
+        Lead salvo com sucesso!
+    </div>
+
+
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, setDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- App State and Elements ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO", authDomain: "DEMO", projectId: "DEMO" };
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-menuerh-app';
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        let currentLeadData = {};
+        const leadsCollectionPath = `/artifacts/${appId}/public/data/leads`;
+        const leadsCollection = collection(db, leadsCollectionPath);
+
+        const screens = document.querySelectorAll('.screen');
+        const navCadastro = document.getElementById('nav-cadastro');
+        const navDashboard = document.getElementById('nav-dashboard');
+
+        // --- Authentication ---
+        async function setupAuth() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                console.log("Authentication successful:", auth.currentUser?.uid);
+                listenForLeads();
+            } catch (error) {
+                console.error("Authentication failed:", error);
+            }
+        }
+
+        // --- Navigation ---
+        function showScreen(screenId) {
+            screens.forEach(screen => {
+                screen.classList.add('hidden');
+            });
+            document.getElementById(screenId).classList.remove('hidden');
+
+            // Update nav button styles
+            if (screenId.startsWith('cadastro') || screenId.startsWith('perguntas') || screenId.startsWith('planos')) {
+                navCadastro.classList.replace('bg-gray-200', 'bg-blue-600');
+                navCadastro.classList.replace('text-gray-700', 'text-white');
+                navDashboard.classList.replace('bg-blue-600', 'bg-gray-200');
+                navDashboard.classList.replace('text-white', 'text-gray-700');
+            } else {
+                navDashboard.classList.replace('bg-gray-200', 'bg-blue-600');
+                navDashboard.classList.replace('text-gray-700', 'text-white');
+                navCadastro.classList.replace('bg-blue-600', 'bg-gray-200');
+                navCadastro.classList.replace('text-white', 'text-gray-700');
+            }
+        }
+
+        navCadastro.addEventListener('click', () => resetAndShowCadastro());
+        navDashboard.addEventListener('click', () => showScreen('dashboard-tela'));
+
+        // --- Screen 1: Cadastro Logic ---
+        const cadastroForm = document.getElementById('cadastro-form');
+        cadastroForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentLeadData.cadastro = {
+                nome: document.getElementById('nome').value,
+                sobrenome: document.getElementById('sobrenome').value,
+                email: document.getElementById('email').value,
+                telefone: document.getElementById('telefone').value,
+                cargo: document.getElementById('cargo').value,
+                empresa: document.getElementById('empresa').value,
+            };
+            showScreen('perguntas-tela');
+        });
+
+        // --- Screen 2: Perguntas Logic ---
+        const perguntasForm = document.getElementById('perguntas-form');
+        perguntasForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            currentLeadData.perguntas = {
+                pergunta1: Array.from(document.querySelectorAll('input[name="pergunta1"]:checked')).map(el => el.value),
+                pergunta2: Array.from(document.querySelectorAll('input[name="pergunta2"]:checked')).map(el => el.value),
+                pergunta3: Array.from(document.querySelectorAll('input[name="pergunta3"]:checked')).map(el => el.value),
+                pergunta4: Array.from(document.querySelectorAll('input[name="pergunta4"]:checked')).map(el => el.value),
+                pergunta5: document.getElementById('pergunta5').value,
+            };
+            showScreen('planos-tela');
+        });
+
+        // --- Screen 3: Planos Logic ---
+        const planos = [
+            { id: 'basico', nome: 'Plano Básico', img: 'https://placehold.co/600x400/3B82F6/FFFFFF?text=Básico', desc: 'Ideal para pequenas equipes que estão começando. Inclui funcionalidades essenciais para gestão de talentos.' },
+            { id: 'pro', nome: 'Plano Profissional', img: 'https://placehold.co/600x400/10B981/FFFFFF?text=Pro', desc: 'A solução mais popular, com ferramentas avançadas de automação, relatórios detalhados e integrações.' },
+            { id: 'enterprise', nome: 'Plano Enterprise', img: 'https://placehold.co/600x400/8B5CF6/FFFFFF?text=Enterprise', desc: 'Para grandes corporações que necessitam de segurança robusta, suporte dedicado e personalização completa.' },
+        ];
+        const carouselTrack = document.getElementById('carousel-track');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dotsContainer = document.getElementById('carousel-dots');
+        let currentIndex = 0;
+
+        function renderCarousel() {
+            carouselTrack.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            planos.forEach((plano, index) => {
+                const item = document.createElement('div');
+                item.className = 'carousel-item w-full';
+                item.innerHTML = `
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 flex flex-col md:flex-row gap-6">
+                        <img src="${plano.img}" alt="Imagem do ${plano.nome}" class="w-full md:w-1/3 h-auto object-cover rounded-lg">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-3">${plano.nome}</h3>
+                            <p class="text-gray-600 mb-4">${plano.desc}</p>
+                            <label class="flex items-center cursor-pointer bg-white border-2 border-gray-300 rounded-lg p-3 hover:bg-blue-50 hover:border-blue-400 transition">
+                                <input type="radio" name="plano-interesse" value="${plano.id}" class="h-5 w-5 text-blue-600 focus:ring-blue-500">
+                                <span class="ml-3 font-semibold text-gray-700">Marcar como interessado</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+                carouselTrack.appendChild(item);
+
+                const dot = document.createElement('button');
+                dot.className = 'w-3 h-3 rounded-full bg-gray-300 transition';
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateCarousel();
+                });
+                dotsContainer.appendChild(dot);
+            });
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const items = document.querySelectorAll('.carousel-item');
+            const dots = document.querySelectorAll('#carousel-dots button');
+            items.forEach((item, index) => {
+                item.classList.toggle('active', index === currentIndex);
+            });
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('bg-blue-600', index === currentIndex);
+                dot.classList.toggle('bg-gray-300', index !== currentIndex);
+            });
+            const offset = -currentIndex * 100;
+            carouselTrack.style.transform = `translateX(${offset}%)`;
+        }
+        
+        prevBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex > 0) ? currentIndex - 1 : planos.length - 1;
+            updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            currentIndex = (currentIndex < planos.length - 1) ? currentIndex + 1 : 0;
+            updateCarousel();
+        });
+
+        document.getElementById('finalizar-btn').addEventListener('click', async () => {
+            const planoSelecionadoInput = document.querySelector('input[name="plano-interesse"]:checked');
+            currentLeadData.planoDestacado = planoSelecionadoInput ? planoSelecionadoInput.value : 'Nenhum';
+            
+            // Generate a unique numeric ID
+            currentLeadData.id = Date.now();
+            currentLeadData.timestamp = new Date().toISOString();
+
+            try {
+                // Use the numeric ID as the document ID in Firestore
+                const docRef = doc(db, leadsCollectionPath, String(currentLeadData.id));
+                await setDoc(docRef, currentLeadData);
+                
+                showToast();
+                resetAndShowCadastro();
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert('Ocorreu um erro ao salvar o lead. Tente novamente.');
+            }
+        });
+
+        function resetAndShowCadastro() {
+            currentLeadData = {};
+            cadastroForm.reset();
+            perguntasForm.reset();
+            const radios = document.querySelectorAll('input[name="plano-interesse"]');
+            radios.forEach(radio => radio.checked = false);
+            currentIndex = 0;
+            updateCarousel();
+            showScreen('cadastro-tela');
+        }
+
+        // --- Screen 4: Dashboard Logic ---
+        function listenForLeads() {
+            const q = query(collection(db, leadsCollectionPath));
+            onSnapshot(q, (querySnapshot) => {
+                const leads = [];
+                querySnapshot.forEach((doc) => {
+                    leads.push({ firestoreId: doc.id, ...doc.data() });
+                });
+                // Sort leads by timestamp descending (newest first)
+                leads.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                updateDashboard(leads);
+            }, (error) => {
+                console.error("Error listening for leads:", error);
+            });
+        }
+
+        function updateDashboard(leads) {
+            document.getElementById('total-leads').textContent = leads.length;
+            const tableBody = document.getElementById('leads-table-body');
+            tableBody.innerHTML = '';
+
+            if (leads.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="text-center py-10 text-gray-500">Nenhum lead cadastrado ainda.</td></tr>`;
+                return;
+            }
+
+            leads.forEach(lead => {
+                const planoInfo = planos.find(p => p.id === lead.planoDestacado);
+                const planoNome = planoInfo ? planoInfo.nome : 'Nenhum';
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 hover:bg-gray-50 cursor-pointer';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${lead.cadastro.nome} ${lead.cadastro.sobrenome}</td>
+                    <td class="py-3 px-4">${lead.cadastro.cargo}</td>
+                    <td class="py-3 px-4">${lead.cadastro.empresa}</td>
+                    <td class="py-3 px-4"><span class="px-2 py-1 text-sm rounded-full ${planoInfo ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'}">${planoNome}</span></td>
+                    <td class="py-3 px-4"><button class="text-blue-600 hover:underline">Ver Detalhes</button></td>
+                `;
+                row.addEventListener('click', () => showLeadModal(lead));
+                tableBody.appendChild(row);
+            });
+        }
+        
+        // --- Modal Logic ---
+        const modal = document.getElementById('lead-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const modalContent = document.getElementById('modal-content');
+
+        function showLeadModal(lead) {
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 border-b pb-2">Informações de Cadastro</h4>
+                        <p><strong>ID:</strong> ${lead.id}</p>
+                        <p><strong>Nome:</strong> ${lead.cadastro.nome} ${lead.cadastro.sobrenome}</p>
+                        <p><strong>Email:</strong> ${lead.cadastro.email}</p>
+                        <p><strong>Telefone:</strong> ${lead.cadastro.telefone}</p>
+                        <p><strong>Cargo:</strong> ${lead.cadastro.cargo}</p>
+                        <p><strong>Empresa:</strong> ${lead.cadastro.empresa}</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-lg mb-3 border-b pb-2">Plano de Interesse</h4>
+                        ${renderModalPlanos(lead.planoDestacado)}
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-3 border-b pb-2">Respostas</h4>
+                    <div class="space-y-3 text-sm">
+                        <p><strong>1. Desafios:</strong> ${lead.perguntas.pergunta1.join(', ') || 'Não respondido'}</p>
+                        <p><strong>2. Tamanho da equipe:</strong> ${lead.perguntas.pergunta2.join(', ') || 'Não respondido'}</p>
+                        <p><strong>3. Usa software de gestão:</strong> ${lead.perguntas.pergunta3.join(', ') || 'Não respondido'}</p>
+                        <p><strong>4. Prioridade de investimento:</strong> ${lead.perguntas.pergunta4.join(', ') || 'Não respondido'}</p>
+                        <p><strong>5. Anotações:</strong> ${lead.perguntas.pergunta5 || 'Nenhuma'}</p>
+                    </div>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+        }
+        
+        function renderModalPlanos(planoId) {
+            if (planoId === 'Nenhum') {
+                return planos.map(plano => `
+                    <div class="mb-2 p-3 bg-gray-100 rounded-lg">
+                        <h5 class="font-semibold">${plano.nome}</h5>
+                        <p class="text-xs text-gray-600">${plano.desc}</p>
+                    </div>
+                `).join('');
+            }
+            const planoInfo = planos.find(p => p.id === planoId);
+            return `
+                <div class="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <h5 class="font-bold text-blue-800">${planoInfo.nome}</h5>
+                    <p class="text-sm text-blue-700">${planoInfo.desc}</p>
+                </div>
+            `;
+        }
+
+        closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.add('hidden');
+            }
+        });
+        
+        // --- Toast Logic ---
+        function showToast() {
+            const toast = document.getElementById('success-toast');
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-10');
+            }, 3000);
+        }
+
+        // --- Initial Load ---
+        window.onload = () => {
+            setupAuth();
+            renderCarousel();
+            showScreen('cadastro-tela');
+        };
+
+    </script>
+</body>
+</html>
