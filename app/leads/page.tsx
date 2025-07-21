@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useLeadForm } from '../../hooks/useLeadForm';
-import { useState } from 'react';
 
 const leadSchema = z.object({
   firstName: z.string().min(1, 'Nome é obrigatório'),
