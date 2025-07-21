@@ -40,6 +40,7 @@ fun Application.module() {
     install(CORS) {
         allowHost("localhost:3000", schemes = listOf("http"))
         allowHost("127.0.0.1:3000", schemes = listOf("http"))
+        allowHost("leads-production-9022.up.railway.app", schemes = listOf("https"))
         allowHeader(io.ktor.http.HttpHeaders.ContentType)
         allowHeader(io.ktor.http.HttpHeaders.Authorization)
         allowHeader("*")
