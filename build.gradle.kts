@@ -59,6 +59,7 @@ tasks.withType<Jar> {
             "Main-Class" to "com.menuerh.ApplicationKt"
         )
     }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     from({
         configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
     })
