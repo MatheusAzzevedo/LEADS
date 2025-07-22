@@ -52,3 +52,14 @@ tasks.test {
 kotlin {
     jvmToolchain(17)
 } 
+
+tasks.withType<Jar> {
+    manifest {
+        attributes(
+            "Main-Class" to "com.menuerh.ApplicationKt"
+        )
+    }
+    from({
+        configurations.runtimeClasspath.get().filter { it.name.endsWith("jar") }.map { zipTree(it) }
+    })
+} 
