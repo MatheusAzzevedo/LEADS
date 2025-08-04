@@ -1,46 +1,45 @@
 export interface Lead {
-  id: string
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  position: string
-  company: string
-  operatorId: string
-  operatorName: string
-  questions: LeadQuestions
-  selectedPlan?: string
-  status: 'new' | 'qualified' | 'contacted' | 'converted' | 'lost'
-  createdAt: string
-  updatedAt: string
-}
-
-export interface LeadQuestions {
-  hasBudget: boolean
-  isDecisionMaker: boolean
-  hasUrgency: boolean
-  isInterested: boolean
-  hasTeam: boolean
-  additionalInfo: string
+  id: string;
+  leadId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  position: string;
+  company: string;
+  operatorId: string;
+  operatorName?: string;
+  interest?: string[];
+  hiring_flow?: string;
+  investment_value?: string;
+  eligible_for_pilot?: boolean;
+  selectedPlan?: string;
+  status?: 'new' | 'qualified' | 'contacted' | 'converted' | 'lost';
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateLeadData {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  position: string
-  company: string
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  position: string;
+  company: string;
+  interest?: string[];
+  hiring_flow?: string;
+  investment_value?: string;
+  eligible_for_pilot?: boolean;
 }
 
 export interface LeadStats {
-  total: number
-  new: number
-  qualified: number
-  contacted: number
-  converted: number
-  lost: number
-  today: number
-  thisWeek: number
-  thisMonth: number
-} 
+  total: number;
+  new: number;
+  qualified: number;
+  contacted: number;
+  converted: number;
+  lost: number;
+  today: number;
+  thisWeek: number;
+  thisMonth: number;
+}

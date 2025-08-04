@@ -36,6 +36,9 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Inconsistência de localStorage**: Corrigido uso de 'auth_token' vs 'token'
 
 ### Alterado
+- **Fluxo de Cadastro de Leads**: O fluxo de cadastro de leads foi reestruturado em duas etapas, com novas perguntas de qualificação (interesse, fluxo de contratação, investimento, elegibilidade para vaga piloto).
+- **Etapa de Planos**: A etapa de seleção de planos foi removida do fluxo de cadastro de leads.
+- **Página de Detalhes do Lead**: A página de detalhes do lead agora exibe as novas informações de qualificação.
 - Dashboard configurado para mostrar apenas dados reais do banco
 - Dados mockados removidos para permitir teste de cadastro
 - Sistema preparado para validação de fluxo completo de leads

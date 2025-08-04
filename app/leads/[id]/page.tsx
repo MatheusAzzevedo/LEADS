@@ -14,12 +14,11 @@ const leadDetailSchema = z.object({
   position: z.string(),
   company: z.string(),
   createdAt: z.string(),
-  selectedPlan: z.string().optional(),
-  question1Responses: z.array(z.string()).optional(),
-  question2Responses: z.array(z.string()).optional(),
-  question3Responses: z.array(z.string()).optional(),
-  question4Responses: z.array(z.string()).optional(),
-  question5Text: z.string().optional(),
+  selectedPlan: z.string().optional().nullable(),
+  interest: z.array(z.string()).optional().nullable(),
+  hiring_flow: z.string().optional().nullable(),
+  investment_value: z.string().optional().nullable(),
+  eligible_for_pilot: z.boolean().optional().nullable(),
 });
 
 type LeadDetail = z.infer<typeof leadDetailSchema>;
@@ -124,25 +123,22 @@ export default function LeadDetailPage() {
           </div>
         </div>
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 text-gray-700">Respostas de Qualificação</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-700">Informações Adicionais</h3>
           <ul className="space-y-2">
-            {lead.question1Responses && (
-              <li><span className="font-semibold">Pergunta 1:</span> {lead.question1Responses.join(', ')}</li>
+            {lead.interest && lead.interest.length > 0 && (
+              <li><span className="font-semibold">Interesse em:</span> {lead.interest.join(', ')}</li>
             )}
-            {lead.question2Responses && (
-              <li><span className="font-semibold">Pergunta 2:</span> {lead.question2Responses.join(', ')}</li>
+            {lead.hiring_flow && (
+              <li><span className="font-semibold">Fluxo de Contratação:</span> {lead.hiring_flow}</li>
             )}
-            {lead.question3Responses && (
-              <li><span className="font-semibold">Pergunta 3:</span> {lead.question3Responses.join(', ')}</li>
+            {lead.investment_value && (
+              <li><span className="font-semibold">Investimento Disponível:</span> {lead.investment_value}</li>
             )}
-            {lead.question4Responses && (
-              <li><span className="font-semibold">Pergunta 4:</span> {lead.question4Responses.join(', ')}</li>
+            {lead.eligible_for_pilot !== null && lead.eligible_for_pilot !== undefined && (
+              <li><span className="font-semibold">Elegível para Vaga Piloto:</span> {lead.eligible_for_pilot ? 'Sim' : 'Não'}</li>
             )}
-            {lead.question5Text && (
-              <li><span className="font-semibold">Pergunta 5:</span> {lead.question5Text}</li>
-            )}
-            {!(lead.question1Responses || lead.question2Responses || lead.question3Responses || lead.question4Responses || lead.question5Text) && (
-              <li className="text-gray-500">Nenhuma resposta registrada.</li>
+            {(!lead.interest || lead.interest.length === 0) && !lead.hiring_flow && !lead.investment_value && lead.eligible_for_pilot === null && (
+              <li className="text-gray-500">Nenhuma informação adicional registrada.</li>
             )}
           </ul>
         </div>

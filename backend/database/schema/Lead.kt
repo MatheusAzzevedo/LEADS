@@ -13,11 +13,10 @@ object Leads : IntIdTable() {
     val phone = varchar("phone", 20)
     val position = varchar("position", 100)
     val company = varchar("company", 100)
-    val question1Responses = text("question1_responses").nullable()
-    val question2Responses = text("question2_responses").nullable()
-    val question3Responses = text("question3_responses").nullable()
-    val question4Responses = text("question4_responses").nullable()
-    val question5Text = text("question5_text").nullable()
+    val interest = text("interest").nullable()
+    val hiring_flow = varchar("hiring_flow", 255).nullable()
+    val investment_value = varchar("investment_value", 255).nullable()
+    val eligible_for_pilot = bool("eligible_for_pilot").nullable()
     val selectedPlan = varchar("selected_plan", 50).nullable()
     val createdAt = datetime("created_at").default(LocalDateTime.now())
     val updatedAt = datetime("updated_at").default(LocalDateTime.now())
@@ -33,12 +32,11 @@ data class Lead(
     val phone: String,
     val position: String,
     val company: String,
-    val question1Responses: List<String>? = null,
-    val question2Responses: List<String>? = null,
-    val question3Responses: List<String>? = null,
-    val question4Responses: List<String>? = null,
-    val question5Text: String? = null,
+    val interest: List<String>? = null,
+    val hiring_flow: String? = null,
+    val investment_value: String? = null,
+    val eligible_for_pilot: Boolean? = null,
     val selectedPlan: String? = null,
     val createdAt: LocalDateTime? = null,
     val updatedAt: LocalDateTime? = null
-) 
+)

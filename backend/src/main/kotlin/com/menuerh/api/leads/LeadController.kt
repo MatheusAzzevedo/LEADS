@@ -82,11 +82,10 @@ data class CreateLeadRequest(
     val phone: String,
     val position: String,
     val company: String,
-    val question1Responses: List<String>? = null,
-    val question2Responses: List<String>? = null,
-    val question3Responses: List<String>? = null,
-    val question4Responses: List<String>? = null,
-    val question5Text: String? = null,
+    val interest: List<String>? = null,
+    val hiring_flow: String? = null,
+    val investment_value: String? = null,
+    val eligible_for_pilot: Boolean? = null,
     val selectedPlan: String? = null
 )
 

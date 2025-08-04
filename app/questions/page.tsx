@@ -1,75 +1,53 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
 import { useLeadForm } from '../../hooks/useLeadForm';
-
-interface QuestionData {
-  question1Responses: string[];
-  question2Responses: string[];
-  question3Responses: string[];
-  question4Responses: string[];
-  question5Text: string;
-}
+import { createLead } from '../../services/api';
+import toast from 'react-hot-toast';
 
 export default function QuestionsPage() {
-  const [formData, setFormData] = useState<QuestionData>({
-    question1Responses: [],
-    question2Responses: [],
-    question3Responses: [],
-    question4Responses: [],
-    question5Text: '',
-  });
   const navigate = useNavigate();
-  const { setLeadForm } = useLeadForm();
+  const { leadForm, setLeadForm } = useLeadForm();
+  const [interest, setInterest] = useState<string[]>([]);
+  const [hiringFlow, setHiringFlow] = useState('');
+  const [investmentValue, setInvestmentValue] = useState('');
+  const [eligibleForPilot, setEligibleForPilot] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const questions = [
-    {
-      id: 1,
-      title: 'Qual é o tamanho da sua empresa?',
-      options: ['1-10 funcionários', '11-50 funcionários', '51-200 funcionários', '200+ funcionários'],
-      type: 'checkbox'
-    },
-    {
-      id: 2,
-      title: 'Qual setor sua empresa atua?',
-      options: ['Tecnologia', 'Saúde', 'Educação', 'Varejo', 'Serviços', 'Outros'],
-      type: 'checkbox'
-    },
-    {
-      id: 3,
-      title: 'Qual é o principal desafio atual?',
-      options: ['Recrutamento', 'Retenção', 'Treinamento', 'Gestão de performance', 'Compliance'],
-      type: 'checkbox'
-    },
-    {
-      id: 4,
-      title: 'Qual é o orçamento disponível?',
-      options: ['Até R$ 1.000/mês', 'R$ 1.000 - R$ 5.000/mês', 'R$ 5.000 - R$ 10.000/mês', 'Acima de R$ 10.000/mês'],
-      type: 'checkbox'
-    }
-  ];
-
-  const handleCheckboxChange = (questionId: number, option: string) => {
-    const fieldName = `question${questionId}Responses` as keyof QuestionData;
-    const currentResponses = formData[fieldName] as string[];
-    
-    if (currentResponses.includes(option)) {
-      setFormData(prev => ({
-        ...prev,
-        [fieldName]: currentResponses.filter(r => r !== option)
-      }));
+  const handleInterestChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setInterest([...interest, value]);
     } else {
-      setFormData(prev => ({
-        ...prev,
-        [fieldName]: [...currentResponses, option]
-      }));
+      setInterest(interest.filter((item) => item !== value));
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLeadForm(formData);
-    navigate('/plans');
+    setLoading(true);
+    
+    const finalLeadData = {
+      ...leadForm,
+      interest,
+      hiring_flow: hiringFlow,
+      investment_value: investmentValue,
+      eligible_for_pilot: eligibleForPilot,
+    };
+
+    setLeadForm(finalLeadData);
+
+    try {
+      await createLead(finalLeadData);
+      toast.success('Lead cadastrado com sucesso!');
+      navigate('/dashboard');
+    } catch (error) {
+      toast.error('Erro ao cadastrar lead.');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -77,54 +55,61 @@ export default function QuestionsPage() {
       <div className="max-w-2xl mx-auto">
         <div className="bg-white p-8 rounded-xl shadow-lg">
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-700">
-            2. Perguntas de Qualificação
+            2. Perguntas Adicionais
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-6">
-            {questions.map((question) => (
-              <div key={question.id} className="space-y-3">
-                <h3 className="text-lg font-medium text-gray-900">
-                  {question.title}
-                </h3>
-                <div className="space-y-2">
-                  {question.options.map((option) => (
-                    <label key={option} className="flex items-center space-x-3">
-                      <input
-                        type="checkbox"
-                        checked={formData[`question${question.id}Responses` as keyof QuestionData]?.includes(option)}
-                        onChange={() => handleCheckboxChange(question.id, option)}
-                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                      />
-                      <span className="text-gray-700">{option}</span>
-                    </label>
-                  ))}
-                </div>
+            <div>
+              <label className="text-lg font-medium text-gray-900">Interesse em:</label>
+              <div className="mt-2 space-y-2">
+                {['Efetivos', 'Aprendizes', 'Estagiários'].map((item) => (
+                  <label key={item} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      value={item}
+                      onChange={handleInterestChange}
+                      className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                    />
+                    <span className="ml-3 text-gray-700">{item}</span>
+                  </label>
+                ))}
               </div>
-            ))}
+            </div>
 
-            <div className="space-y-3">
-              <h3 className="text-lg font-medium text-gray-900">
-                5. Há algo mais que gostaria de nos contar?
-              </h3>
-              <textarea
-                value={formData.question5Text}
-                onChange={(e) => setFormData(prev => ({ ...prev, question5Text: e.target.value }))}
-                rows={4}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Conte-nos mais sobre suas necessidades..."
+            <Input
+              label="Qual é o fluxo de contratação por mês?"
+              value={hiringFlow}
+              onChange={(e) => setHiringFlow(e.target.value)}
+              placeholder="Ex: 5 contratações/mês"
+            />
+
+            <Input
+              label="Qual valor de investimento disponível?"
+              value={investmentValue}
+              onChange={(e) => setInvestmentValue(e.target.value)}
+              placeholder="Ex: R$ 10.000"
+            />
+
+            <div className="flex items-center">
+              <input
+                id="eligible"
+                type="radio"
+                name="eligibility"
+                checked={eligibleForPilot}
+                onChange={() => setEligibleForPilot(true)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300"
               />
+              <label htmlFor="eligible" className="ml-3 block text-sm font-medium text-gray-700">
+                Elegível a Vaga Piloto
+              </label>
             </div>
             
-            <Button
-              type="submit"
-              loading={false}
-              className="w-full"
-            >
-              Próximo
+            <Button type="submit" loading={loading} className="w-full">
+              Finalizar Cadastro
             </Button>
           </form>
         </div>
       </div>
     </div>
   );
-} 
+}

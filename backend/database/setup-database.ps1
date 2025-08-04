@@ -60,6 +60,16 @@ try {
     exit 1
 }
 
+# Migration 003 - Alterar tabela de leads
+Write-Host "Executando migration 003 - Alterar tabela de leads..." -ForegroundColor Cyan
+try {
+    & psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -f "database/migrations/003_alter_leads_table.sql"
+    Write-Host "Migration 003 executada com sucesso" -ForegroundColor Green
+} catch {
+    Write-Host "Erro ao executar migration 003" -ForegroundColor Red
+    exit 1
+}
+
 # Verificar dados inseridos
 Write-Host "Verificando dados inseridos..." -ForegroundColor Yellow
 Write-Host "Operadores cadastrados:" -ForegroundColor Cyan

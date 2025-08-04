@@ -239,6 +239,7 @@ npm run dev
 
 ### ✅ Fluxo de Navegação Ajustado
 - [x] Login redireciona para dashboard (não mais para leads)
+- [x] Fluxo de cadastro de leads reestruturado em duas etapas com novas perguntas de qualificação.
 - [x] Dashboard como página principal após login
 - [x] Botão "Novo Lead" navega para fluxo de cadastro
 - [x] Fluxo completo: Dashboard → Leads → Perguntas → Planos → Dashboard
