@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { useLeadForm } from '../../hooks/useLeadForm';
-import { createLead } from '../../services/api';
+import { apiService } from '../../services/api';
 import toast from 'react-hot-toast';
 
 export default function QuestionsPage() {
@@ -39,7 +39,7 @@ export default function QuestionsPage() {
     setLeadForm(finalLeadData);
 
     try {
-      await createLead(finalLeadData);
+      await apiService.createLead(finalLeadData);
       toast.success('Lead cadastrado com sucesso!');
       navigate('/dashboard');
     } catch (error) {

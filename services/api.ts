@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { LoginRequest, LoginResponse, Lead, CreateLeadRequest, Plan, DashboardStats } from '../types';
+import { LoginCredentials, AuthResponse, Lead, CreateLeadRequest, Plan, DashboardStats } from '../types';
 
 class ApiService {
   private api: AxiosInstance;
@@ -37,8 +37,8 @@ class ApiService {
   }
 
   // Autenticação
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const response: AxiosResponse<LoginResponse> = await this.api.post('/auth/login', credentials);
+  async login(credentials: LoginCredentials): Promise<AuthResponse> {
+    const response: AxiosResponse<AuthResponse> = await this.api.post('/auth/login', credentials);
     return response.data;
   }
 

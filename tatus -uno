@@ -1,0 +1,5 @@
+[33m95c04e5[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Modify: Fluxo de cadastro lead
+[33m37a16f6[m Fix: Validação de Apis
+[33mce569a1[m fix(frontend): garantir que todas as chamadas de API usam VITE_API_URL como baseURL
+[33m097a240[m fix(frontend): restaurar src do React na raiz para build separado do backend
+[33m390d57c[m feat: mover todo o backend para a pasta backend/ para deploy isolado

@@ -19,7 +19,7 @@ export interface Lead {
   updatedAt: string;
 }
 
-export interface CreateLeadData {
+export interface CreateLeadRequest {
   firstName: string;
   lastName: string;
   email: string;
