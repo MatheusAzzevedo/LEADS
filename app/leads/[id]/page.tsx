@@ -124,24 +124,60 @@ export default function LeadDetailPage() {
         </div>
         <div className="mb-8">
           <h3 className="text-xl font-semibold mb-4 text-gray-700">Respostas do Formulário</h3>
-          <ul className="space-y-2">
-            {lead.question1Responses && lead.question1Responses.length > 0 && (
-              <li><span className="font-semibold">Interesse em:</span> {lead.question1Responses.join(', ')}</li>
-            )}
-            {lead.question2Responses && lead.question2Responses.length > 0 && (
-              <li><span className="font-semibold">Como contratam:</span> {lead.question2Responses.join(', ')}</li>
-            )}
-            {lead.question3Responses && lead.question3Responses.length > 0 && (
-              <li><span className="font-semibold">Forma de pagamento:</span> {lead.question3Responses.join(', ')}</li>
-            )}
-             {lead.question4Responses && lead.question4Responses.length > 0 && (
-              <li><span className="font-semibold">Investimento:</span> {lead.question4Responses.join(', ')}</li>
-            )}
-            {lead.question5Text && (
-              <li><span className="font-semibold">Detalhes adicionais:</span> {lead.question5Text}</li>
-            )}
-            
-          </ul>
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="space-y-4">
+              {lead.question1Responses && lead.question1Responses.length > 0 && (
+                <div className="border-b border-gray-200 pb-3">
+                  <h4 className="font-semibold text-gray-800 mb-2">Interesse em:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {lead.question1Responses.map((item, index) => (
+                      <span key={index} className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {lead.question2Responses && lead.question2Responses.length > 0 && (
+                <div className="border-b border-gray-200 pb-3">
+                  <h4 className="font-semibold text-gray-800 mb-2">Fluxo de Contratação por Mês:</h4>
+                  <p className="text-gray-700">{lead.question2Responses.join(', ')}</p>
+                </div>
+              )}
+              
+              {lead.question4Responses && lead.question4Responses.length > 0 && (
+                <div className="border-b border-gray-200 pb-3">
+                  <h4 className="font-semibold text-gray-800 mb-2">Valor de Investimento Disponível:</h4>
+                  <p className="text-gray-700">{lead.question4Responses.join(', ')}</p>
+                </div>
+              )}
+              
+              {lead.question3Responses && lead.question3Responses.length > 0 && (
+                <div className="border-b border-gray-200 pb-3">
+                  <h4 className="font-semibold text-gray-800 mb-2">Forma de Pagamento:</h4>
+                  <p className="text-gray-700">{lead.question3Responses.join(', ')}</p>
+                </div>
+              )}
+              
+              {lead.question5Text && (
+                <div className="pb-3">
+                  <h4 className="font-semibold text-gray-800 mb-2">Detalhes Adicionais:</h4>
+                  <p className="text-gray-700">{lead.question5Text}</p>
+                </div>
+              )}
+              
+              {(!lead.question1Responses || lead.question1Responses.length === 0) &&
+               (!lead.question2Responses || lead.question2Responses.length === 0) &&
+               (!lead.question3Responses || lead.question3Responses.length === 0) &&
+               (!lead.question4Responses || lead.question4Responses.length === 0) &&
+               !lead.question5Text && (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Nenhuma resposta adicional foi fornecida.</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
         
         {/* Botões de Navegação */}

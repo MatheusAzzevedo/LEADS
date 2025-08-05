@@ -30,9 +30,9 @@ export default function QuestionsPage() {
     
     const finalLeadData = {
       ...leadForm,
-      interest,
-      hiring_flow: hiringFlow,
-      investment_value: investmentValue,
+      question1Responses: interest,
+      question2Responses: [hiringFlow],
+      question4Responses: [investmentValue],
       vagaPiloto: eligibleForPilot,
     };
 
