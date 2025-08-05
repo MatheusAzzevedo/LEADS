@@ -17,16 +17,18 @@ object MigrationRunner {
      */
     fun applyMigration004(database: Database) {
         try {
-            transaction(database) {
-                val connection = this.connection.connection as Connection
+            // Usar conexão direta para evitar conflitos com Exposed
+            val dataSource = database.connector()
+            dataSource.connection.use { connection ->
                 
                 // Verificar se a coluna vaga_piloto já existe
-                val resultSet = connection.prepareStatement("""
+                val checkQuery = """
                     SELECT column_name 
                     FROM information_schema.columns 
                     WHERE table_name = 'leads' AND column_name = 'vaga_piloto'
-                """.trimIndent()).executeQuery()
+                """.trimIndent()
                 
+                val resultSet = connection.prepareStatement(checkQuery).executeQuery()
                 val columnExists = resultSet.next()
                 resultSet.close()
                 
@@ -34,35 +36,35 @@ object MigrationRunner {
                     println("🔄 Aplicando migração 004: Adicionando coluna vaga_piloto...")
                     
                     // Adicionar coluna vaga_piloto
-                    exec("""
+                    connection.prepareStatement("""
                         ALTER TABLE leads ADD COLUMN vaga_piloto BOOLEAN DEFAULT FALSE
-                    """.trimIndent())
+                    """.trimIndent()).execute()
                     
                     // Remover coluna selected_plan se existir
                     try {
-                        exec("""
+                        connection.prepareStatement("""
                             ALTER TABLE leads DROP COLUMN IF EXISTS selected_plan
-                        """.trimIndent())
+                        """.trimIndent()).execute()
                     } catch (e: Exception) {
-                        println("⚠️ Coluna selected_plan já foi removida ou não existe")
+                        println("⚠️ Coluna selected_plan já foi removida ou não existe: ${e.message}")
                     }
                     
                     // Remover tabela plans se existir
                     try {
-                        exec("""
+                        connection.prepareStatement("""
                             DROP TABLE IF EXISTS plans CASCADE
-                        """.trimIndent())
+                        """.trimIndent()).execute()
                     } catch (e: Exception) {
-                        println("⚠️ Tabela plans já foi removida ou não existe")
+                        println("⚠️ Tabela plans já foi removida ou não existe: ${e.message}")
                     }
                     
                     // Remover índice relacionado a plans se existir
                     try {
-                        exec("""
+                        connection.prepareStatement("""
                             DROP INDEX IF EXISTS idx_plans_plan_id
-                        """.trimIndent())
+                        """.trimIndent()).execute()
                     } catch (e: Exception) {
-                        println("⚠️ Índice idx_plans_plan_id já foi removido ou não existe")
+                        println("⚠️ Índice idx_plans_plan_id já foi removido ou não existe: ${e.message}")
                     }
                     
                     println("✅ Migração 004 aplicada com sucesso!")
@@ -72,7 +74,8 @@ object MigrationRunner {
             }
         } catch (e: Exception) {
             println("❌ Erro ao aplicar migração 004: ${e.message}")
-            throw e
+            e.printStackTrace()
+            // Não propagar o erro para não quebrar a aplicação
         }
     }
     
@@ -81,22 +84,23 @@ object MigrationRunner {
      */
     fun verifyMigrations(database: Database): Boolean {
         return try {
-            transaction(database) {
-                val connection = this.connection.connection as Connection
+            val dataSource = database.connector()
+            dataSource.connection.use { connection ->
                 
                 // Verificar se a coluna vaga_piloto existe
-                val resultSet = connection.prepareStatement("""
+                val checkQuery = """
                     SELECT column_name 
                     FROM information_schema.columns 
                     WHERE table_name = 'leads' AND column_name = 'vaga_piloto'
-                """.trimIndent()).executeQuery()
+                """.trimIndent()
                 
+                val resultSet = connection.prepareStatement(checkQuery).executeQuery()
                 val hasVagaPiloto = resultSet.next()
                 resultSet.close()
                 
                 if (!hasVagaPiloto) {
                     println("❌ Migração necessária: coluna vaga_piloto não existe")
-                    return@transaction false
+                    return@use false
                 }
                 
                 println("✅ Todas as migrações estão aplicadas")
@@ -104,6 +108,7 @@ object MigrationRunner {
             }
         } catch (e: Exception) {
             println("❌ Erro ao verificar migrações: ${e.message}")
+            e.printStackTrace()
             false
         }
     }

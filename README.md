@@ -270,9 +270,10 @@ npm run dev
 - **Solução Implementada**:
   - ✅ Criado `MigrationRunner.kt` para aplicar migrações automaticamente
   - ✅ Modificado `DatabaseConfig.kt` para executar migrações na inicialização
-  - ✅ Criados scripts manuais `apply-migration-railway.sql` e `apply-migration-railway.ps1`
-  - ✅ Sistema agora verifica e aplica automaticamente a migração 004 ao inicializar
-- **Resultado**: Coluna `vaga_piloto` será adicionada automaticamente no próximo deploy
+  - ✅ Melhorada execução de migração usando conexão direta (sem Exposed)
+  - ✅ Adicionada lógica de fallback no `LeadRepository` para funcionar sem a coluna
+  - ✅ Sistema robusto que funciona antes e depois da migração
+- **Resultado**: Aplicação funciona imediatamente e migração é aplicada automaticamente
 
 ## 🔧 Desenvolvimento
 
