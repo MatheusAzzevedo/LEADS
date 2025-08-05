@@ -11,17 +11,27 @@ object DatabaseConfig {
     fun init() {
         val driverClassName = "org.postgresql.Driver"
 
+        // Debug: Verificar todas as variáveis de ambiente disponíveis
+        println("🔍 Variáveis de ambiente disponíveis:")
+        System.getenv().forEach { (key, value) ->
+            if (key.startsWith("PG") || key.startsWith("DATABASE") || key.startsWith("POSTGRES")) {
+                println("  $key = $value")
+            }
+        }
+
         // Constrói a URL JDBC a partir das variáveis de ambiente do Railway
-        val dbHost = System.getenv("PGHOST") ?: "localhost"
-        val dbPort = System.getenv("PGPORT") ?: "5432"
-        val dbName = System.getenv("PGDATABASE") ?: "menuerh_db"
+        val dbHost = System.getenv("PGHOST") ?: System.getenv("POSTGRES_HOST") ?: "localhost"
+        val dbPort = System.getenv("PGPORT") ?: System.getenv("POSTGRES_PORT") ?: "5432"
+        val dbName = System.getenv("PGDATABASE") ?: System.getenv("POSTGRES_DB") ?: "menuerh_db"
         val jdbcURL = "jdbc:postgresql://$dbHost:$dbPort/$dbName"
 
-        val username = System.getenv("PGUSER") ?: "postgres"
-        val password = System.getenv("PGPASSWORD") ?: "admin123"
+        val username = System.getenv("PGUSER") ?: System.getenv("POSTGRES_USER") ?: "postgres"
+        val password = System.getenv("PGPASSWORD") ?: System.getenv("POSTGRES_PASSWORD") ?: "admin123"
         val poolSize = System.getenv("DATABASE_POOL_SIZE")?.toIntOrNull() ?: 10
 
-        println("Attempting to connect to database at $jdbcURL with user $username")
+        println("🔗 Tentando conectar ao banco: $jdbcURL")
+        println("👤 Usuário: $username")
+        println("🔑 Pool size: $poolSize")
 
         val config = HikariConfig().apply {
             this.driverClassName = driverClassName
