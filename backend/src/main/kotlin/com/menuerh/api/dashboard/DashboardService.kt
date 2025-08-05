@@ -10,21 +10,35 @@ class DashboardService(
     suspend fun getDashboardStats(): DashboardStats {
         val leads = leadService.getAllLeads()
         
+        println("🔍 Debug - DashboardService - Analisando leads:")
+        leads.forEach { lead ->
+            println("  Lead: ${lead.firstName} ${lead.lastName}")
+            println("    question1Responses: ${lead.question1Responses}")
+            println("    vagaPiloto: ${lead.vagaPiloto}")
+        }
+        
         val totalLeads = leads.size
         val elegivelVagaPiloto = leads.count { it.vagaPiloto == true }
         
-        // Contar por tipo de interesse
+        // Contar por tipo de interesse - um lead pode ter múltiplos interesses
         val estagiarios = leads.count { lead ->
-            lead.question1Responses?.contains("Estagiários") == true
+            lead.question1Responses?.any { it == "Estagiários" } == true
         }
         
         val aprendizes = leads.count { lead ->
-            lead.question1Responses?.contains("Aprendizes") == true
+            lead.question1Responses?.any { it == "Aprendizes" } == true
         }
         
         val efetivos = leads.count { lead ->
-            lead.question1Responses?.contains("Efetivos") == true
+            lead.question1Responses?.any { it == "Efetivos" } == true
         }
+        
+        println("🔍 Debug - DashboardService - Contadores:")
+        println("  Total de leads: $totalLeads")
+        println("  Elegível vaga piloto: $elegivelVagaPiloto")
+        println("  Estagiários: $estagiarios")
+        println("  Aprendizes: $aprendizes")
+        println("  Efetivos: $efetivos")
         
         return DashboardStats(
             totalLeads = totalLeads,
