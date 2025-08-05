@@ -14,11 +14,12 @@ const leadDetailSchema = z.object({
   position: z.string(),
   company: z.string(),
   createdAt: z.string(),
-  selectedPlan: z.string().optional().nullable(),
-  interest: z.array(z.string()).optional().nullable(),
-  hiring_flow: z.string().optional().nullable(),
-  investment_value: z.string().optional().nullable(),
-  eligible_for_pilot: z.boolean().optional().nullable(),
+  vagaPiloto: z.boolean().optional().nullable(),
+  question1Responses: z.array(z.string()).optional().nullable(),
+  question2Responses: z.array(z.string()).optional().nullable(),
+  question3Responses: z.array(z.string()).optional().nullable(),
+  question4Responses: z.array(z.string()).optional().nullable(),
+  question5Text: z.string().optional().nullable(),
 });
 
 type LeadDetail = z.infer<typeof leadDetailSchema>;
@@ -44,7 +45,6 @@ export default function LeadDetailPage() {
       setError(null);
       try {
         const data = await apiService.getLeadById(id!);
-        console.log('Lead recebido da API:', data);
         const parsed = leadDetailSchema.safeParse(data);
         if (!parsed.success) {
           setError('Dados do lead inválidos.');
@@ -116,30 +116,31 @@ export default function LeadDetailPage() {
             <span className="font-semibold">Cargo:</span> {lead.position}
           </div>
           <div>
-            <span className="font-semibold">Plano Selecionado:</span> {lead.selectedPlan || 'Não informado'}
+            <span className="font-semibold">Vaga Piloto:</span> {lead.vagaPiloto ? 'Sim' : 'Não'}
           </div>
           <div>
             <span className="font-semibold">Data de Cadastro:</span> {new Date(lead.createdAt).toLocaleString('pt-BR')}
           </div>
         </div>
         <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4 text-gray-700">Informações Adicionais</h3>
+          <h3 className="text-xl font-semibold mb-4 text-gray-700">Respostas do Formulário</h3>
           <ul className="space-y-2">
-            {lead.interest && lead.interest.length > 0 && (
-              <li><span className="font-semibold">Interesse em:</span> {lead.interest.join(', ')}</li>
+            {lead.question1Responses && lead.question1Responses.length > 0 && (
+              <li><span className="font-semibold">Interesse em:</span> {lead.question1Responses.join(', ')}</li>
             )}
-            {lead.hiring_flow && (
-              <li><span className="font-semibold">Fluxo de Contratação:</span> {lead.hiring_flow}</li>
+            {lead.question2Responses && lead.question2Responses.length > 0 && (
+              <li><span className="font-semibold">Como contratam:</span> {lead.question2Responses.join(', ')}</li>
             )}
-            {lead.investment_value && (
-              <li><span className="font-semibold">Investimento Disponível:</span> {lead.investment_value}</li>
+            {lead.question3Responses && lead.question3Responses.length > 0 && (
+              <li><span className="font-semibold">Forma de pagamento:</span> {lead.question3Responses.join(', ')}</li>
             )}
-            {lead.eligible_for_pilot !== null && lead.eligible_for_pilot !== undefined && (
-              <li><span className="font-semibold">Elegível para Vaga Piloto:</span> {lead.eligible_for_pilot ? 'Sim' : 'Não'}</li>
+             {lead.question4Responses && lead.question4Responses.length > 0 && (
+              <li><span className="font-semibold">Investimento:</span> {lead.question4Responses.join(', ')}</li>
             )}
-            {(!lead.interest || lead.interest.length === 0) && !lead.hiring_flow && !lead.investment_value && lead.eligible_for_pilot === null && (
-              <li className="text-gray-500">Nenhuma informação adicional registrada.</li>
+            {lead.question5Text && (
+              <li><span className="font-semibold">Detalhes adicionais:</span> {lead.question5Text}</li>
             )}
+            
           </ul>
         </div>
         
@@ -174,4 +175,4 @@ export default function LeadDetailPage() {
       </div>
     </div>
   );
-} 
+}

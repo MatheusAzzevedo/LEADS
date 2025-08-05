@@ -21,7 +21,7 @@ object Leads : IntIdTable() {
     val question3Responses = registerColumn<List<String>?>("question3_responses", PostgresTextArrayColumnType())
     val question4Responses = registerColumn<List<String>?>("question4_responses", PostgresTextArrayColumnType())
     val question5Text = text("question5_text").nullable()
-    val selectedPlan = varchar("selected_plan", 50).nullable()
+    val vagaPiloto = bool("vaga_piloto").default(false)
     val createdAt = datetime("created_at").default(LocalDateTime.now())
     val updatedAt = datetime("updated_at").default(LocalDateTime.now())
 }
@@ -42,7 +42,7 @@ data class Lead(
     val question3Responses: List<String>? = null,
     val question4Responses: List<String>? = null,
     val question5Text: String? = null,
-    val selectedPlan: String? = null,
+    val vagaPiloto: Boolean? = false,
     @Serializable(with = LocalDateTimeSerializer::class)
     val createdAt: LocalDateTime? = null,
     @Serializable(with = LocalDateTimeSerializer::class)

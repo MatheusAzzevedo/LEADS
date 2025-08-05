@@ -17,11 +17,12 @@ class LeadService(private val leadRepository: LeadRepository) {
             phone = leadData.phone,
             position = leadData.position,
             company = leadData.company,
-            interest = leadData.interest,
-            hiring_flow = leadData.hiring_flow,
-            investment_value = leadData.investment_value,
-            eligible_for_pilot = leadData.eligible_for_pilot,
-            selectedPlan = leadData.selectedPlan
+            question1Responses = leadData.question1Responses,
+            question2Responses = leadData.question2Responses,
+            question3Responses = leadData.question3Responses,
+            question4Responses = leadData.question4Responses,
+            question5Text = leadData.question5Text,
+            vagaPiloto = leadData.vagaPiloto
         )
         
         return leadRepository.createLead(lead)
@@ -35,10 +36,6 @@ class LeadService(private val leadRepository: LeadRepository) {
         return leadRepository.getLeadById(leadId)
     }
     
-    suspend fun getLeadsByOperator(operatorId: Int): List<Lead> {
-        return leadRepository.getLeadsByOperator(operatorId)
-    }
-    
     private fun generateLeadId(): String {
         return System.currentTimeMillis().toString()
     }
@@ -46,4 +43,4 @@ class LeadService(private val leadRepository: LeadRepository) {
     suspend fun deleteLeadById(leadId: String): Boolean {
         return leadRepository.deleteLeadById(leadId)
     }
-} 
+}

@@ -3,7 +3,6 @@ package com.menuerh
 import com.menuerh.api.auth.AuthRoutes
 import com.menuerh.api.dashboard.DashboardRoutes
 import com.menuerh.api.leads.LeadRoutes
-import com.menuerh.api.plans.PlanRoutes
 import com.menuerh.api.websocket.WebSocketRoutes
 import com.menuerh.database.DatabaseConfig
 import com.menuerh.middleware.AuthMiddleware
@@ -55,7 +54,6 @@ fun Application.module() {
     // Configurar rotas
     AuthRoutes()
     LeadRoutes()
-    PlanRoutes()
     DashboardRoutes()
     WebSocketRoutes()
-} 
+}

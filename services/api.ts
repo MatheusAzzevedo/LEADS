@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { LoginCredentials, AuthResponse, Lead, CreateLeadRequest, Plan, DashboardStats } from '../types';
+import { LoginCredentials, AuthResponse, Lead, DashboardStats } from '../types';
 
 class ApiService {
   private api: AxiosInstance;
@@ -52,7 +52,7 @@ class ApiService {
   }
 
   // Leads
-  async createLead(lead: CreateLeadRequest): Promise<Lead> {
+  async createLead(lead: Partial<Lead>): Promise<Lead> {
     const response: AxiosResponse<Lead> = await this.api.post('/leads', lead);
     return response.data;
   }
@@ -76,12 +76,6 @@ class ApiService {
     await this.api.delete(`/leads/${id}`);
   }
 
-  // Planos
-  async getAllPlans(): Promise<Plan[]> {
-    const response: AxiosResponse<Plan[]> = await this.api.get('/plans');
-    return response.data;
-  }
-
   // Dashboard
   async getDashboardStats(): Promise<DashboardStats> {
     const response: AxiosResponse<DashboardStats> = await this.api.get('/dashboard/stats');
@@ -89,4 +83,4 @@ class ApiService {
   }
 }
 
-export const apiService = new ApiService(); 
+export const apiService = new ApiService();

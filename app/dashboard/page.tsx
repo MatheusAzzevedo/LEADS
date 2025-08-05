@@ -23,7 +23,6 @@ export default function DashboardPage() {
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterPlan, setFilterPlan] = useState('all');
   const [leadToDelete, setLeadToDelete] = useState<Lead | null>(null);
   const [deleting, setDeleting] = useState(false);
 
@@ -35,21 +34,14 @@ export default function DashboardPage() {
     try {
       const [statsData, leadsData] = await Promise.all([
         apiService.getDashboardStats(),
-        apiService.getMyLeads()
+        apiService.getAllLeads()
       ]);
       setStats(statsData);
       setLeads(leadsData);
     } catch (error) {
       console.error('Erro ao carregar dados do dashboard:', error);
-      // Inicializar com dados vazios para teste
       setStats({
         totalLeads: 0,
-        leadsByPlan: {
-          'basic': 0,
-          'pro': 0,
-          'enterprise': 0
-        },
-        plans: []
       });
       setLeads([]);
     } finally {
@@ -82,15 +74,10 @@ export default function DashboardPage() {
   };
 
   const filteredLeads = leads.filter(lead => {
-    const matchesSearch = 
-      lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    return lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.company.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesFilter = filterPlan === 'all' || lead.selectedPlan === filterPlan;
-    
-    return matchesSearch && matchesFilter;
   });
 
   const formatDate = (dateString: string) => {
@@ -248,18 +235,6 @@ export default function DashboardPage() {
                   />
                 </div>
               </div>
-              <div className="sm:w-48">
-                <select
-                  value={filterPlan}
-                  onChange={(e) => setFilterPlan(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500"
-                >
-                  <option value="all">Todos os planos</option>
-                  <option value="basic">Básico</option>
-                  <option value="pro">Pro</option>
-                  <option value="enterprise">Enterprise</option>
-                </select>
-              </div>
             </div>
           </div>
 
@@ -275,7 +250,7 @@ export default function DashboardPage() {
                     Empresa
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Plano
+                    Vaga Piloto
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Data
@@ -305,12 +280,9 @@ export default function DashboardPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                        lead.selectedPlan === 'enterprise' ? 'bg-purple-100 text-purple-800' :
-                        lead.selectedPlan === 'pro' ? 'bg-blue-100 text-blue-800' :
-                        'bg-green-100 text-green-800'
+                        lead.vagaPiloto ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}>
-                        {lead.selectedPlan === 'enterprise' ? 'Enterprise' :
-                         lead.selectedPlan === 'pro' ? 'Pro' : 'Básico'}
+                        {lead.vagaPiloto ? 'Sim' : 'Não'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -345,4 +317,4 @@ export default function DashboardPage() {
       </div>
     </div>
   );
-} 
+}

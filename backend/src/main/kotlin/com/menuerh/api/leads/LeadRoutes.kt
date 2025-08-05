@@ -26,10 +26,6 @@ fun Application.LeadRoutes() {
                 leadController.getAllLeads(call)
             }
             
-            get("/my") {
-                leadController.getLeadsByOperator(call)
-            }
-            
             get("/{id}") {
                 leadController.getLeadById(call)
             }
@@ -38,4 +34,4 @@ fun Application.LeadRoutes() {
             }
         }
     }
-} 
+}

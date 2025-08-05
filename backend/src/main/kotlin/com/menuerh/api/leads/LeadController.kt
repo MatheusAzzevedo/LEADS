@@ -47,17 +47,6 @@ class LeadController(private val leadService: LeadService) {
             call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Erro ao buscar lead"))
         }
     }
-    
-    suspend fun getLeadsByOperator(call: ApplicationCall) {
-        try {
-            val operatorId = call.getCurrentOperatorId()
-            val leads = leadService.getLeadsByOperator(operatorId)
-            
-            call.respond(HttpStatusCode.OK, leads)
-        } catch (e: Exception) {
-            call.respond(HttpStatusCode.InternalServerError, ErrorResponse("Erro ao buscar leads do operador"))
-        }
-    }
 
     suspend fun deleteLead(call: ApplicationCall) {
         try {
@@ -82,12 +71,13 @@ data class CreateLeadRequest(
     val phone: String,
     val position: String,
     val company: String,
-    val interest: List<String>? = null,
-    val hiring_flow: String? = null,
-    val investment_value: String? = null,
-    val eligible_for_pilot: Boolean? = null,
-    val selectedPlan: String? = null
+    val question1Responses: List<String>? = null,
+    val question2Responses: List<String>? = null,
+    val question3Responses: List<String>? = null,
+    val question4Responses: List<String>? = null,
+    val question5Text: String? = null,
+    val vagaPiloto: Boolean? = false
 )
 
 @Serializable
-data class ErrorResponse(val message: String) 
+data class ErrorResponse(val message: String)
