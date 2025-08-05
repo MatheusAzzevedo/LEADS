@@ -18,7 +18,6 @@ dependencies {
     implementation("io.ktor:ktor-server-content-negotiation:2.3.7")
     implementation("io.ktor:ktor-serialization-kotlinx-json:2.3.7")
     implementation("io.ktor:ktor-server-cors:2.3.7")
-    implementation("io.ktor:ktor-server-static-files:2.3.7")
     implementation("io.ktor:ktor-server-auth:2.3.7")
     implementation("io.ktor:ktor-server-auth-jwt:2.3.7")
     implementation("io.ktor:ktor-server-websockets:2.3.7")

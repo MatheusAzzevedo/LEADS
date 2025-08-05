@@ -12,7 +12,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.cors.routing.*
-import io.ktor.server.plugins.staticfiles.*
+
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
@@ -54,13 +54,7 @@ fun Application.module() {
         allowCredentials = true
     }
     
-    // Configurar arquivos estáticos
-    install(StaticFiles) {
-        static("/") {
-            files("static")
-            default("index.html")
-        }
-    }
+
     
     // Configurar rotas
     routing {
@@ -125,10 +119,32 @@ fun Application.module() {
                 </html>
             """.trimIndent(), ContentType.Text.Html)
         }
+        
+        // Fallback para rotas do React - servir index.html
+        get("/{...}") {
+            call.respondText("""
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8" />
+                    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+                    <title>MenuErh - Sistema de Gestão de Leads</title>
+                </head>
+                <body>
+                    <div id="root"></div>
+                    <script type="module" src="/src/main.tsx"></script>
+                </body>
+                </html>
+            """.trimIndent(), ContentType.Text.Html)
+        }
     }
     
-    AuthRoutes()
-    LeadRoutes()
-    DashboardRoutes()
-    WebSocketRoutes()
+    // Configurar rotas da API primeiro
+    routing {
+        AuthRoutes()
+        LeadRoutes()
+        DashboardRoutes()
+        WebSocketRoutes()
+    }
 }
