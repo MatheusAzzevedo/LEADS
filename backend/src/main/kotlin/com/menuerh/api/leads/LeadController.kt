@@ -15,6 +15,12 @@ class LeadController(private val leadService: LeadService) {
             val request = call.receive<CreateLeadRequest>()
             val operatorId = call.getCurrentOperatorId()
             
+            println("🔍 Debug - Dados recebidos do frontend:")
+            println("  vagaPiloto: ${request.vagaPiloto}")
+            println("  firstName: ${request.firstName}")
+            println("  lastName: ${request.lastName}")
+            println("  email: ${request.email}")
+            
             val lead = leadService.createLead(request, operatorId)
             
             call.respond(HttpStatusCode.Created, lead)

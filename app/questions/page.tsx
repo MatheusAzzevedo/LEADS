@@ -33,7 +33,7 @@ export default function QuestionsPage() {
       interest,
       hiring_flow: hiringFlow,
       investment_value: investmentValue,
-      eligible_for_pilot: eligibleForPilot,
+      vagaPiloto: eligibleForPilot,
     };
 
     setLeadForm(finalLeadData);

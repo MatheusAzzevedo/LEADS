@@ -8,6 +8,10 @@ class LeadService(private val leadRepository: LeadRepository) {
     suspend fun createLead(leadData: CreateLeadRequest, operatorId: Int): Lead {
         val leadId = generateLeadId()
         
+        println("🔍 Debug - LeadService - Dados processados:")
+        println("  vagaPiloto recebido: ${leadData.vagaPiloto}")
+        println("  vagaPiloto tipo: ${leadData.vagaPiloto?.javaClass?.simpleName}")
+        
         val lead = Lead(
             leadId = leadId,
             operatorId = operatorId,
@@ -24,6 +28,9 @@ class LeadService(private val leadRepository: LeadRepository) {
             question5Text = leadData.question5Text,
             vagaPiloto = leadData.vagaPiloto
         )
+        
+        println("🔍 Debug - Lead criado:")
+        println("  vagaPiloto final: ${lead.vagaPiloto}")
         
         return leadRepository.createLead(lead)
     }

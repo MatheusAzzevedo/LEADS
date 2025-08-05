@@ -25,6 +25,9 @@ class LeadRepository {
                 it[question3Responses] = lead.question3Responses
                 it[question4Responses] = lead.question4Responses
                 it[question5Text] = lead.question5Text
+                println("🔍 Debug - LeadRepository - Salvando no banco:")
+                println("  vagaPiloto valor: ${lead.vagaPiloto}")
+                println("  vagaPiloto após fallback: ${lead.vagaPiloto ?: false}")
                 it[vagaPiloto] = lead.vagaPiloto ?: false
                 it[createdAt] = LocalDateTime.now()
                 it[updatedAt] = LocalDateTime.now()
