@@ -40,34 +40,7 @@ object MigrationRunner {
                         ALTER TABLE leads ADD COLUMN vaga_piloto BOOLEAN DEFAULT FALSE
                     """.trimIndent()).execute()
                     
-                    // Remover coluna selected_plan se existir
-                    try {
-                        connection.prepareStatement("""
-                            ALTER TABLE leads DROP COLUMN IF EXISTS selected_plan
-                        """.trimIndent()).execute()
-                    } catch (e: Exception) {
-                        println("⚠️ Coluna selected_plan já foi removida ou não existe: ${e.message}")
-                    }
-                    
-                    // Remover tabela plans se existir
-                    try {
-                        connection.prepareStatement("""
-                            DROP TABLE IF EXISTS plans CASCADE
-                        """.trimIndent()).execute()
-                    } catch (e: Exception) {
-                        println("⚠️ Tabela plans já foi removida ou não existe: ${e.message}")
-                    }
-                    
-                    // Remover índice relacionado a plans se existir
-                    try {
-                        connection.prepareStatement("""
-                            DROP INDEX IF EXISTS idx_plans_plan_id
-                        """.trimIndent()).execute()
-                    } catch (e: Exception) {
-                        println("⚠️ Índice idx_plans_plan_id já foi removido ou não existe: ${e.message}")
-                    }
-                    
-                    println("✅ Migração 004 aplicada com sucesso!")
+                    println("✅ Migração 004 (vaga_piloto) aplicada com sucesso!")
                 } else {
                     println("✅ Migração 004 já foi aplicada - coluna vaga_piloto existe")
                 }

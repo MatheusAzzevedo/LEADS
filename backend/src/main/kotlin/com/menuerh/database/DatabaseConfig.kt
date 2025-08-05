@@ -10,10 +10,18 @@ import org.jetbrains.exposed.sql.transactions.transaction
 object DatabaseConfig {
     fun init() {
         val driverClassName = "org.postgresql.Driver"
-        val jdbcURL = System.getenv("DATABASE_URL") ?: "jdbc:postgresql://localhost:5432/menuerh_db"
-        val username = System.getenv("DATABASE_USER") ?: "postgres"
-        val password = System.getenv("DATABASE_PASSWORD") ?: "admin123"
+
+        // Constrói a URL JDBC a partir das variáveis de ambiente do Railway
+        val dbHost = System.getenv("PGHOST") ?: "localhost"
+        val dbPort = System.getenv("PGPORT") ?: "5432"
+        val dbName = System.getenv("PGDATABASE") ?: "menuerh_db"
+        val jdbcURL = "jdbc:postgresql://$dbHost:$dbPort/$dbName"
+
+        val username = System.getenv("PGUSER") ?: "postgres"
+        val password = System.getenv("PGPASSWORD") ?: "admin123"
         val poolSize = System.getenv("DATABASE_POOL_SIZE")?.toIntOrNull() ?: 10
+
+        println("Attempting to connect to database at $jdbcURL with user $username")
 
         val config = HikariConfig().apply {
             this.driverClassName = driverClassName

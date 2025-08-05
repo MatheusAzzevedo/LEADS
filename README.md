@@ -5,7 +5,7 @@
 O **MenuErh** é um sistema simples e eficiente para gestão de leads, desenvolvido para atendentes cadastrarem e acompanharem leads em tempo real.
 
 ### 🎯 Objetivo
-Sistema focado em capturar informações de leads através de um fluxo estruturado: cadastro → perguntas → apresentação de planos → dashboard.
+Sistema focado em capturar informações de leads através de um fluxo estruturado: cadastro de lead -> qualificação -> dashboard.
 
 ### 🏗️ Arquitetura
 - **Estrutura**: Unificada modular por domínio/feature
@@ -147,7 +147,6 @@ psql -d menuerh_db -f database/migrations/002_insert_initial_data.sql
 
 # Verificar dados inseridos
 psql -d menuerh_db -c "SELECT username, name FROM operators;"
-psql -d menuerh_db -c "SELECT plan_id, name FROM plans;"
 ```
 
 ### 5. Executar em Desenvolvimento
@@ -186,10 +185,10 @@ npm run dev
 ### ✅ Concluído (Fase 2)
 - [x] Estrutura do banco de dados PostgreSQL
 - [x] Scripts de migração (001_create_tables.sql, 002_insert_initial_data.sql)
-- [x] Modelos Exposed (Operator, Lead, Plan)
+- [x] Modelos Exposed (Operator, Lead)
 - [x] Configuração de conexão com banco (DatabaseConfig)
 - [x] Sistema de autenticação JWT (AuthService)
-- [x] Repositórios de dados (OperatorRepository, PlanRepository)
+- [x] Repositórios de dados (OperatorRepository)
 - [x] Utilitários para arrays PostgreSQL
 - [x] Scripts de setup automatizado (PowerShell/Shell)
 - [x] 10 operadores pré-cadastrados (operador1-10 / admin123)
@@ -197,7 +196,7 @@ npm run dev
 
 ### ✅ Concluído (Fase 3)
 - [x] Servidor Ktor configurado e funcionando
-- [x] APIs REST implementadas (auth, leads, plans, dashboard)
+- [x] APIs REST implementadas (auth, leads, dashboard)
 - [x] Sistema de autenticação JWT completo
 - [x] Middleware de autenticação para rotas protegidas
 - [x] WebSocket para comunicação em tempo real
@@ -242,13 +241,12 @@ npm run dev
 - [x] Fluxo de cadastro de leads reestruturado em duas etapas com novas perguntas de qualificação.
 - [x] Dashboard como página principal após login
 - [x] Botão "Novo Lead" navega para fluxo de cadastro
-- [x] Fluxo completo: Dashboard → Leads → Perguntas → Planos → Dashboard
+- [x] Fluxo completo: Dashboard → Leads → Perguntas → Dashboard
 
 ### ✅ Backend Funcional (100%)
 - [x] Servidor Ktor rodando em http://localhost:8080
 - [x] APIs de autenticação funcionando com JWT
 - [x] APIs de leads funcionando com middleware de autenticação
-- [x] APIs de planos funcionando
 - [x] APIs de dashboard funcionando com middleware de autenticação
 - [x] WebSocket configurado
 - [x] Banco de dados PostgreSQL conectado
@@ -261,7 +259,7 @@ npm run dev
 
 ### 🔎 Página de Detalhes do Lead
 - Agora é possível visualizar todos os dados de um lead cadastrado clicando em "Ver detalhes" na dashboard.
-- O sistema navega para `/leads/[id]`, onde são exibidos nome, email, telefone, empresa, cargo, plano e data de cadastro do lead.
+- O sistema navega para `/leads/[id]`, onde são exibidos nome, email, telefone, empresa, cargo e data de cadastro do lead.
 - A busca dos dados é feita via API protegida, com validação Zod e tratamento de erros.
 
 ### 🔧 Correção de Migração de Banco (vaga_piloto)

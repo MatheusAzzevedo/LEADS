@@ -43,14 +43,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### Alterado
 - **Fluxo de Cadastro de Leads**: O fluxo de cadastro de leads foi reestruturado em duas etapas, com novas perguntas de qualificação (interesse, fluxo de contratação, investimento, elegibilidade para vaga piloto).
 - **Etapa de Planos**: A etapa de seleção de planos foi removida do fluxo de cadastro de leads.
-- **Página de Detalhes do Lead**: A página de detalhes do lead agora exibe as novas informações de qualificação.
-- Dashboard configurado para mostrar apenas dados reais do banco
-- Dados mockados removidos para permitir teste de cadastro
-- Sistema preparado para validação de fluxo completo de leads
-- Fluxo de navegação ajustado: login → dashboard → novo lead → fluxo completo
-- Rota padrão alterada de `/leads` para `/dashboard`
-- Botão "Novo Lead" agora navega corretamente para página de cadastro
-- Java 21 alterado para Java 17 para compatibilidade com ambiente de desenvolvimento
 
 ### Corrigido
 - Componente Input corrigido com forwardRef para compatibilidade com React Hook Form
@@ -68,7 +60,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
   - Roteamento Ktor corrigido (routes() em vez de route())
   - Middleware de autenticação ajustado para funcionar corretamente
   - Compilação Kotlin funcionando sem erros
-  - APIs de autenticação, leads e planos operacionais
+  - **APIs de autenticação, leads e dashboard operacionais**
   - Sistema funcionando a 95% de capacidade
 
 ## [0.5.1] - 2024-01-XX
@@ -81,7 +73,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
   - Roteamento Ktor corrigido (routes() em vez de route())
   - Middleware de autenticação ajustado para funcionar corretamente
   - Compilação Kotlin funcionando sem erros
-  - APIs de autenticação, leads e planos operacionais
+  - **APIs de autenticação, leads e dashboard operacionais**
   - Sistema funcionando a 95% de capacidade
 
 ### Alterado
@@ -110,7 +102,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Autenticação**: Login/logout com validação de token
 - **Cadastro de Leads**: Formulário completo com validação
 - **Perguntas**: Sistema de qualificação com 5 perguntas
-- **Planos**: Carrossel com 3 planos e seleção
+
 - **Dashboard**: Estatísticas em tempo real e tabela de leads
 - **UI/UX**: Interface moderna e responsiva
 - **Validação**: Formulários validados com Zod
@@ -125,7 +117,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - `app/(auth)/login/page.tsx` - Página de login melhorada
 - `app/leads/page.tsx` - Página de cadastro de leads
 - `app/questions/page.tsx` - Página de perguntas
-- `app/plans/page.tsx` - Página de planos com carrossel
+
 - `app/dashboard/page.tsx` - Dashboard completo
 
 ### Alterado
@@ -157,7 +149,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### Funcionalidades Implementadas
 - **Autenticação**: Login, validação de token, middleware de proteção
 - **Leads**: CRUD completo com repositório e serviço
-- **Planos**: Listagem de planos ativos
 - **Dashboard**: Estatísticas em tempo real
 - **WebSocket**: Comunicação bidirecional
 - **Logging**: Console + arquivo com rotação
@@ -167,7 +158,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - `src/main/kotlin/com/menuerh/middleware/AuthMiddleware.kt` - Middleware de autenticação
 - `src/main/kotlin/com/menuerh/api/auth/` - APIs de autenticação
 - `src/main/kotlin/com/menuerh/api/leads/` - APIs de leads
-- `src/main/kotlin/com/menuerh/api/plans/` - APIs de planos
 - `src/main/kotlin/com/menuerh/api/dashboard/` - APIs de dashboard
 - `src/main/kotlin/com/menuerh/api/websocket/` - WebSocket
 - `src/main/resources/logback.xml` - Configuração de logging
@@ -180,7 +170,6 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - `GET /leads` - Listar todos os leads (protegido)
 - `GET /leads/my` - Leads do operador (protegido)
 - `GET /leads/{id}` - Detalhes do lead (protegido)
-- `GET /plans` - Listar planos ativos
 - `GET /dashboard/stats` - Estatísticas (protegido)
 - `WS /ws` - WebSocket para tempo real
 
@@ -201,10 +190,10 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### Adicionado
 - Implementação completa da Fase 2: Banco de Dados e Autenticação
 - Scripts de migração SQL (001_create_tables.sql, 002_insert_initial_data.sql)
-- Modelos Exposed para Kotlin (Operator, Lead, Plan)
+- Modelos Exposed para Kotlin (Operator, Lead)
 - Configuração de conexão PostgreSQL com HikariCP
 - Sistema de autenticação JWT completo
-- Repositórios de dados (OperatorRepository, PlanRepository)
+- Repositórios de dados (OperatorRepository)
 - Utilitários para manipulação de arrays PostgreSQL
 - Scripts automatizados de setup (PowerShell e Bash)
 - 10 operadores pré-cadastrados com senha admin123
