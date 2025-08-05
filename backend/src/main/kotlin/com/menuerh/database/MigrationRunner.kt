@@ -17,9 +17,9 @@ object MigrationRunner {
      */
     fun applyMigration004(database: Database) {
         try {
-            // Usar conexão direta para evitar conflitos com Exposed
-            val dataSource = database.connector()
-            dataSource.connection.use { connection ->
+            transaction(database) {
+                // Obter a conexão JDBC da transação do Exposed
+                val connection = (this.connection as org.jetbrains.exposed.sql.statements.jdbc.JdbcConnectionImpl).connection
                 
                 // Verificar se a coluna vaga_piloto já existe
                 val checkQuery = """
@@ -57,8 +57,9 @@ object MigrationRunner {
      */
     fun verifyMigrations(database: Database): Boolean {
         return try {
-            val dataSource = database.connector()
-            dataSource.connection.use { connection ->
+            transaction(database) {
+                // Obter a conexão JDBC da transação do Exposed
+                val connection = (this.connection as org.jetbrains.exposed.sql.statements.jdbc.JdbcConnectionImpl).connection
                 
                 // Verificar se a coluna vaga_piloto existe
                 val checkQuery = """
@@ -73,7 +74,7 @@ object MigrationRunner {
                 
                 if (!hasVagaPiloto) {
                     println("❌ Migração necessária: coluna vaga_piloto não existe")
-                    return@use false
+                    return@transaction false
                 }
                 
                 println("✅ Todas as migrações estão aplicadas")
