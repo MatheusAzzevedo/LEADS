@@ -42,6 +42,10 @@ export default function DashboardPage() {
       console.error('Erro ao carregar dados do dashboard:', error);
       setStats({
         totalLeads: 0,
+        elegivelVagaPiloto: 0,
+        estagiarios: 0,
+        aprendizes: 0,
+        efetivos: 0,
       });
       setLeads([]);
     } finally {
@@ -140,7 +144,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Cards de Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
           <div className="bg-white p-6 rounded-xl shadow-sm">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -159,15 +163,8 @@ export default function DashboardPage() {
                 <TrendingUp className="h-6 w-6 text-green-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Leads este Mês</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {leads.filter(lead => {
-                    const leadDate = new Date(lead.createdAt || '');
-                    const now = new Date();
-                    return leadDate.getMonth() === now.getMonth() && 
-                           leadDate.getFullYear() === now.getFullYear();
-                  }).length}
-                </p>
+                <p className="text-sm font-medium text-gray-600">Elegível a Vaga Piloto</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.elegivelVagaPiloto || 0}</p>
               </div>
             </div>
           </div>
@@ -178,14 +175,8 @@ export default function DashboardPage() {
                 <Calendar className="h-6 w-6 text-yellow-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Leads Hoje</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {leads.filter(lead => {
-                    const leadDate = new Date(lead.createdAt || '');
-                    const today = new Date();
-                    return leadDate.toDateString() === today.toDateString();
-                  }).length}
-                </p>
+                <p className="text-sm font-medium text-gray-600">Estagiários</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.estagiarios || 0}</p>
               </div>
             </div>
           </div>
@@ -196,10 +187,20 @@ export default function DashboardPage() {
                 <DollarSign className="h-6 w-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Taxa de Conversão</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {stats?.totalLeads ? Math.round((leads.length / stats.totalLeads) * 100) : 0}%
-                </p>
+                <p className="text-sm font-medium text-gray-600">Aprendizes</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.aprendizes || 0}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-xl shadow-sm">
+            <div className="flex items-center">
+              <div className="p-2 bg-red-100 rounded-lg">
+                <Users className="h-6 w-6 text-red-600" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Efetivos</p>
+                <p className="text-2xl font-bold text-gray-900">{stats?.efetivos || 0}</p>
               </div>
             </div>
           </div>

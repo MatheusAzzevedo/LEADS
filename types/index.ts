@@ -5,6 +5,10 @@ export * from './lead';
 // You can also define other shared types here if needed
 export interface DashboardStats {
   totalLeads: number;
+  elegivelVagaPiloto: number;
+  estagiarios: number;
+  aprendizes: number;
+  efetivos: number;
 }
 
 export interface ApiResponse<T> {
