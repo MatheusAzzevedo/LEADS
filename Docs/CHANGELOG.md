@@ -26,6 +26,10 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Commit e push no GitHub agora disparam deploy automático no Railway para produção.
 
 ### Corrigido
+- **Erro de compilação no deploy**: Corrigido problema de contexto de rotas no Application.kt
+  - Funções DashboardRoutes() e WebSocketRoutes() movidas para fora do bloco routing
+  - Compilação Kotlin funcionando sem erros
+  - Deploy pronto para nova tentativa
 - **Middleware de autenticação**: Aplicado corretamente nas rotas de leads e dashboard
 - **Erro 500 na API**: Resolvido problema de autenticação nas rotas protegidas
 - **Erro de migração no Railway**: Corrigido erro `column leads.vaga_piloto does not exist`

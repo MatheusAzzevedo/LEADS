@@ -140,11 +140,9 @@ fun Application.module() {
         }
     }
     
-    // Configurar rotas da API primeiro
-    routing {
-        AuthRoutes()
-        LeadRoutes()
-        DashboardRoutes()
-        WebSocketRoutes()
-    }
+    // Configurar rotas da API
+    AuthRoutes()
+    LeadRoutes()
+    DashboardRoutes()
+    WebSocketRoutes()
 }
