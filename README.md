@@ -264,6 +264,16 @@ npm run dev
 - O sistema navega para `/leads/[id]`, onde são exibidos nome, email, telefone, empresa, cargo, plano e data de cadastro do lead.
 - A busca dos dados é feita via API protegida, com validação Zod e tratamento de erros.
 
+### 🔧 Correção de Migração de Banco (vaga_piloto)
+- **Problema Identificado**: Erro `column leads.vaga_piloto does not exist` no Railway
+- **Causa**: Migração 004 não foi aplicada no banco de produção
+- **Solução Implementada**:
+  - ✅ Criado `MigrationRunner.kt` para aplicar migrações automaticamente
+  - ✅ Modificado `DatabaseConfig.kt` para executar migrações na inicialização
+  - ✅ Criados scripts manuais `apply-migration-railway.sql` e `apply-migration-railway.ps1`
+  - ✅ Sistema agora verifica e aplica automaticamente a migração 004 ao inicializar
+- **Resultado**: Coluna `vaga_piloto` será adicionada automaticamente no próximo deploy
+
 ## 🔧 Desenvolvimento
 
 ### Comandos Úteis

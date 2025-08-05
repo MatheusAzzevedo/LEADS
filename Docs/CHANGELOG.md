@@ -28,6 +28,11 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 ### Corrigido
 - **Middleware de autenticação**: Aplicado corretamente nas rotas de leads e dashboard
 - **Erro 500 na API**: Resolvido problema de autenticação nas rotas protegidas
+- **Erro de migração no Railway**: Corrigido erro `column leads.vaga_piloto does not exist`
+  - Implementado `MigrationRunner.kt` para aplicar migrações automaticamente
+  - Modificado `DatabaseConfig.kt` para executar migrações na inicialização
+  - Criados scripts manuais para aplicar migração 004 no Railway
+  - Sistema agora verifica e aplica automaticamente a migração ao inicializar
 - **Erro 403 Forbidden**: Corrigido aplicando middleware de autenticação
 - **Erro 401 Unauthorized**: Corrigido problema de token não sendo enviado corretamente
 - **Arquivo vite.svg**: Criado para resolver erro 404 do favicon

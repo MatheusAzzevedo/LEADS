@@ -30,7 +30,16 @@ object DatabaseConfig {
         }
 
         val dataSource = HikariDataSource(config)
-        Database.connect(dataSource)
+        val database = Database.connect(dataSource)
+        
+        // Aplicar migrações necessárias
+        try {
+            println("🔄 Verificando e aplicando migrações...")
+            MigrationRunner.applyMigration004(database)
+        } catch (e: Exception) {
+            println("⚠️ Erro ao aplicar migrações: ${e.message}")
+            // Continuar mesmo com erro de migração para não quebrar a aplicação
+        }
         
         println("✅ Database connection initialized successfully")
     }
