@@ -43,9 +43,9 @@ data class Lead(
     val question4Responses: List<String>? = null,
     val question5Text: String? = null,
     val vagaPiloto: Boolean? = false,
-    @Serializable(with = LocalDateTimeSerializer::class)
+    @Serializable(with = com.menuerh.database.LocalDateTimeSerializer::class)
     val createdAt: LocalDateTime? = null,
-    @Serializable(with = LocalDateTimeSerializer::class)
+    @Serializable(with = com.menuerh.database.LocalDateTimeSerializer::class)
     val updatedAt: LocalDateTime? = null
 )
 
