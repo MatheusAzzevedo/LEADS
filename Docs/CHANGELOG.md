@@ -24,6 +24,9 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - Arquivo vite.svg para resolver erro 404 do favicon
 - Página de detalhes do lead acessível via dashboard, exibindo todos os dados do lead ao clicar em "Ver detalhes".
 - Commit e push no GitHub agora disparam deploy automático no Railway para produção.
+ - Backend serve build do Vite (SPA) com fallback de rotas para evitar 404 no iOS/rota direta
+ - Script `sync-spa-to-backend.cjs` para sincronizar `dist/` → `backend/src/main/resources/static`
+ - Script NPM `build:full` para build integrado frontend+backend
 
 ### Corrigido
 - **Erro de compilação no deploy**: Corrigido problema de contexto de rotas no Application.kt
@@ -42,6 +45,7 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 - **Arquivo vite.svg**: Criado para resolver erro 404 do favicon
 - **Compilação Kotlin**: Sistema funcionando a 100% de capacidade
 - **Integração frontend/backend**: Token JWT sendo enviado corretamente nas requisições
+ - **404 em /login e favicon no iOS/produção**: Adicionado fallback SPA e mapeamento de estáticos no Ktor
 - **Inconsistência de localStorage**: Corrigido uso de 'auth_token' vs 'token'
 
 ### Alterado

@@ -174,6 +174,37 @@ npm run dev
 - **Dashboard**: http://localhost:3000/dashboard
 - **Health Check**: http://localhost:8080/health
 
+## 🧩 Evitando 404 no Mobile (iOS) e Deploy
+
+Para evitar erros 404 em rotas do SPA (ex.: `/login`, `/dashboard`) quando acessadas diretamente no iOS ou em produção, o backend Ktor foi configurado para:
+
+- Servir os arquivos estáticos do build do Vite a partir de `backend/src/main/resources/static`.
+- Usar fallback de History API: qualquer rota não-API retorna `index.html`.
+- Servir `/favicon.ico` para evitar 404 de favicon.
+
+Pipeline recomendado de build e sincronização:
+
+```bash
+# 1) Build do frontend
+npm run build
+
+# 2) Sincronizar build para o backend (copia dist/ para backend/src/main/resources/static)
+npm run sync:spa
+
+# 3) Build do backend (gera JAR com os estáticos embutidos)
+cd backend && ./gradlew build
+```
+
+Atalho:
+
+```bash
+npm run build:full
+```
+
+Observações:
+- Coloque `vite.svg` e `favicon.ico` em `public/` (o Vite os copiará para `dist/`).
+- Em produção, acesse as rotas do SPA no mesmo host do backend.
+
 ## 📊 Status do Desenvolvimento
 
 ### ✅ Concluído (Fase 1)

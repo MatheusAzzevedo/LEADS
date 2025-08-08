@@ -17,6 +17,9 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.routing.*
 import io.ktor.server.response.*
 import io.ktor.http.*
+import io.ktor.server.http.content.*
+import io.ktor.server.plugins.statuspages.*
+import io.ktor.server.request.*
 import kotlinx.serialization.json.Json
 
 fun main() {
@@ -54,89 +57,46 @@ fun Application.module() {
         allowCredentials = true
     }
     
+    // Servir SPA (Vite build) e fallback de rotas para evitar 404 em /login, /dashboard, etc.
+    install(StatusPages) {
+        status(HttpStatusCode.NotFound) { call, status ->
+            val uri = call.request.uri
+            val isGet = call.request.httpMethod == HttpMethod.Get
+            val isApiOrStatic = uri.startsWith("/api") || uri.startsWith("/websocket") || uri.startsWith("/assets")
+            val isFileRequest = uri.endsWith(".js") || uri.endsWith(".css") || uri.endsWith(".map") || uri.endsWith(".svg") || uri.endsWith(".ico")
 
-    
-    // Configurar rotas
-    routing {
-        get("/") {
-            call.respondText("""
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>MenuErh API</title>
-                    <meta charset="UTF-8">
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-                        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-                        h1 { color: #333; text-align: center; }
-                        .endpoint { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #007bff; }
-                        .method { color: #007bff; font-weight: bold; }
-                        .status { color: #28a745; font-weight: bold; }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                        <h1>🚀 MenuErh API - Sistema de Gestão de Leads</h1>
-                        <p class="status">✅ API funcionando corretamente!</p>
-                        
-                        <h2>📋 Endpoints Disponíveis:</h2>
-                        
-                        <div class="endpoint">
-                            <span class="method">POST</span> <strong>/auth/login</strong><br>
-                            Fazer login no sistema
-                        </div>
-                        
-                        <div class="endpoint">
-                            <span class="method">GET</span> <strong>/leads</strong><br>
-                            Listar todos os leads (requer autenticação)
-                        </div>
-                        
-                        <div class="endpoint">
-                            <span class="method">POST</span> <strong>/leads</strong><br>
-                            Criar novo lead (requer autenticação)
-                        </div>
-                        
-                        <div class="endpoint">
-                            <span class="method">GET</span> <strong>/dashboard/stats</strong><br>
-                            Obter estatísticas do dashboard (requer autenticação)
-                        </div>
-                        
-                        <div class="endpoint">
-                            <span class="method">WS</span> <strong>/websocket</strong><br>
-                            Conexão WebSocket para tempo real
-                        </div>
-                        
-                        <h2>🔗 Links Úteis:</h2>
-                        <p>
-                            <a href="/dashboard/stats" target="_blank">Ver Estatísticas (JSON)</a><br>
-                            <strong>Nota:</strong> Endpoints protegidos requerem token JWT no header Authorization
-                        </p>
-                        
-                        <h2>📖 Documentação:</h2>
-                        <p>Esta é uma API REST. Para usar a interface web completa, acesse o frontend React.</p>
-                    </div>
-                </body>
-                </html>
-            """.trimIndent(), ContentType.Text.Html)
+            if (isGet && !isApiOrStatic && !isFileRequest) {
+                val indexStream = this@module::class.java.classLoader.getResourceAsStream("static/index.html")
+                if (indexStream != null) {
+                    val bytes = indexStream.readAllBytes()
+                    call.respondBytes(bytes, ContentType.Text.Html)
+                    return@status
+                }
+            }
+            call.respond(status)
         }
-        
-        // Fallback para rotas do React - servir index.html
-        get("/{...}") {
-            call.respondText("""
-                <!DOCTYPE html>
-                <html lang="pt-BR">
-                <head>
-                    <meta charset="UTF-8" />
-                    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-                    <title>MenuErh - Sistema de Gestão de Leads</title>
-                </head>
-                <body>
-                    <div id="root"></div>
-                    <script type="module" src="/src/main.tsx"></script>
-                </body>
-                </html>
-            """.trimIndent(), ContentType.Text.Html)
+    }
+
+    // Rotas estáticas para arquivos do build (dist)
+    routing {
+        // Arquivos gerados pelo Vite: /assets/*, index.html, vite.svg, etc.
+        staticResources("/assets", "static/assets")
+        staticResources("/", "static")
+
+        // Evitar 404 do favicon em alguns navegadores
+        get("/favicon.ico") {
+            val favicon = this@module::class.java.classLoader.getResourceAsStream("static/favicon.ico")
+            if (favicon != null) {
+                call.respondBytes(favicon.readAllBytes(), ContentType.parse("image/x-icon"))
+            } else {
+                // Tentar servir o vite.svg como fallback
+                val svg = this@module::class.java.classLoader.getResourceAsStream("static/vite.svg")
+                if (svg != null) {
+                    call.respondBytes(svg.readAllBytes(), ContentType.parse("image/svg+xml"))
+                } else {
+                    call.respond(HttpStatusCode.NotFound)
+                }
+            }
         }
     }
     
