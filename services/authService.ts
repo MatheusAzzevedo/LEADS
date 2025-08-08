@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { LoginCredentials, AuthResponse, User } from '../types/auth'
 
-const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8080/api' : window.location.origin + '/api')
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_BASE_URL = isLocal ? 'http://localhost:8080/api' : '/api'
 
 // Configurar axios com interceptors para token
 const api = axios.create({

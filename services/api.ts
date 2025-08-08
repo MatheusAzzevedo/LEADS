@@ -5,8 +5,9 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     this.api = axios.create({
-      baseURL: (import.meta as any).env?.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8080/api' : window.location.origin + '/api'),
+      baseURL: isLocal ? 'http://localhost:8080/api' : '/api',
       headers: {
         'Content-Type': 'application/json',
       },
