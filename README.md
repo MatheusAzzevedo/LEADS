@@ -169,7 +169,7 @@ npm run dev
 ## 🌐 URLs de Acesso
 
 - **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:8080
+- **Backend API**: http://localhost:8080/api
 - **Login**: http://localhost:3000/login
 - **Dashboard**: http://localhost:3000/dashboard
 - **Health Check**: http://localhost:8080/health

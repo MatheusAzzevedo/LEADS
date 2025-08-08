@@ -13,7 +13,7 @@ fun Application.DashboardRoutes() {
     val authMiddleware = AuthMiddleware()
     
     routing {
-        route("/dashboard") {
+        route("/api/dashboard") {
             // Aplicar middleware de autenticação nas rotas de dashboard
             intercept(ApplicationCallPipeline.Call) {
                 authMiddleware.intercept(this)
