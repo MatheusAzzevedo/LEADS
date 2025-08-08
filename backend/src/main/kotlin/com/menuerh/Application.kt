@@ -46,6 +46,8 @@ fun Application.module() {
         allowHost("localhost:3000", schemes = listOf("http"))
         allowHost("127.0.0.1:3000", schemes = listOf("http"))
         allowHost("leads-production-9022.up.railway.app", schemes = listOf("https"))
+        allowHost("menurh-back-production.up.railway.app", schemes = listOf("https"))
+        allowHost("*.up.railway.app", schemes = listOf("https"))
         allowHeader(io.ktor.http.HttpHeaders.ContentType)
         allowHeader(io.ktor.http.HttpHeaders.Authorization)
         allowHeader("*")
@@ -62,7 +64,7 @@ fun Application.module() {
         status(HttpStatusCode.NotFound) { call, status ->
             val uri = call.request.uri
             val isGet = call.request.httpMethod == HttpMethod.Get
-            val isApiOrStatic = uri.startsWith("/api") || uri.startsWith("/websocket") || uri.startsWith("/assets")
+            val isApiOrStatic = uri.startsWith("/api") || uri.startsWith("/websocket") || uri.startsWith("/assets") || uri.startsWith("/auth")
             val isFileRequest = uri.endsWith(".js") || uri.endsWith(".css") || uri.endsWith(".map") || uri.endsWith(".svg") || uri.endsWith(".ico")
 
             if (isGet && !isApiOrStatic && !isFileRequest) {
