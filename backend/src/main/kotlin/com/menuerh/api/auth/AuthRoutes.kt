@@ -9,7 +9,7 @@ fun Application.AuthRoutes() {
     val authController = AuthController(authService)
     
     routing {
-        route("/auth") {
+        route("/api/auth") {
             post("/login") {
                 authController.login(call)
             }

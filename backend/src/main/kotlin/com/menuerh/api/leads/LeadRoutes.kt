@@ -12,7 +12,7 @@ fun Application.LeadRoutes() {
     val authMiddleware = AuthMiddleware()
     
     routing {
-        route("/leads") {
+        route("/api/leads") {
             // Aplicar middleware de autenticação em todas as rotas de leads
             intercept(ApplicationCallPipeline.Call) {
                 authMiddleware.intercept(this)
