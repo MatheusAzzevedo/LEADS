@@ -6,7 +6,7 @@ class ApiService {
 
   constructor() {
     this.api = axios.create({
-      baseURL: (import.meta as any).env?.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8080/api' : '/api'),
+      baseURL: (import.meta as any).env?.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:8080/api' : window.location.origin + '/api'),
       headers: {
         'Content-Type': 'application/json',
       },
