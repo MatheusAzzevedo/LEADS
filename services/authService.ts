@@ -1,8 +1,14 @@
 import axios from 'axios'
 import { LoginCredentials, AuthResponse, User } from '../types/auth'
 
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-const API_BASE_URL = isLocal ? 'http://localhost:8080/api' : '/api'
+const host = window.location.hostname
+const isLocal = host === 'localhost' || host === '127.0.0.1'
+const isRailway = host.endsWith('.up.railway.app')
+const API_BASE_URL = isLocal
+  ? 'http://localhost:8080/api'
+  : isRailway
+    ? 'https://menurh-back-production.up.railway.app/api'
+    : '/api'
 
 // Configurar axios com interceptors para token
 const api = axios.create({

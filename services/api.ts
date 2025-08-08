@@ -5,9 +5,17 @@ class ApiService {
   private api: AxiosInstance;
 
   constructor() {
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    const host = window.location.hostname;
+    const isLocal = host === 'localhost' || host === '127.0.0.1';
+    const isRailway = host.endsWith('.up.railway.app');
+    const baseURL = isLocal
+      ? 'http://localhost:8080/api'
+      : isRailway
+        ? 'https://menurh-back-production.up.railway.app/api'
+        : '/api';
+
     this.api = axios.create({
-      baseURL: isLocal ? 'http://localhost:8080/api' : '/api',
+      baseURL,
       headers: {
         'Content-Type': 'application/json',
       },
