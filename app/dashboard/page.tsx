@@ -36,8 +36,8 @@ export default function DashboardPage() {
         apiService.getDashboardStats(),
         apiService.getAllLeads()
       ]);
-      setStats(statsData);
-      setLeads(leadsData);
+      setStats(statsData as DashboardStats);
+      setLeads(Array.isArray(leadsData) ? leadsData : []);
     } catch (error) {
       console.error('Erro ao carregar dados do dashboard:', error);
       setStats({
@@ -77,7 +77,8 @@ export default function DashboardPage() {
     }
   };
 
-  const filteredLeads = leads.filter(lead => {
+  const safeLeads: Lead[] = Array.isArray(leads) ? leads : [];
+  const filteredLeads = safeLeads.filter(lead => {
     return lead.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       lead.email.toLowerCase().includes(searchTerm.toLowerCase()) ||

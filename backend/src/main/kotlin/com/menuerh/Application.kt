@@ -100,6 +100,31 @@ fun Application.module() {
                 }
             }
         }
+
+        // Servir vite.svg explicitamente (alguns proxies não servem via staticResources)
+        get("/vite.svg") {
+            val svg = this@module::class.java.classLoader.getResourceAsStream("static/vite.svg")
+            if (svg != null) {
+                call.respondBytes(svg.readAllBytes(), ContentType.parse("image/svg+xml"))
+            } else {
+                call.respond(HttpStatusCode.NotFound)
+            }
+        }
+
+        // Fallback explícito de SPA para qualquer GET que não seja API/arquivo
+        get("/{...}") {
+            val uri = call.request.uri
+            val isApi = uri.startsWith("/api") || uri.startsWith("/websocket")
+            val isFile = uri.contains('.')
+            if (!isApi && !isFile) {
+                val indexStream = this@module::class.java.classLoader.getResourceAsStream("static/index.html")
+                if (indexStream != null) {
+                    call.respondBytes(indexStream.readAllBytes(), ContentType.Text.Html)
+                    return@get
+                }
+            }
+            call.respond(HttpStatusCode.NotFound)
+        }
     }
     
     // Configurar rotas da API
